@@ -1,0 +1,14 @@
+{
+    "$schema": "https://developers.cloudflare.com/workers/wrangler/config-schema.json",
+    "name": "portfolio",
+    "compatibility_date": "2025-09-11",
+    // assets: Viteの出力(build)をWorkersに添付
+    "assets": {
+        "directory": "./build/client",
+        // SPA 用フォールバック: どのパスでも index.html を返す
+        "not_found_handling": "single-page-application"
+    },
+
+    "preview_urls": true
+    // main は「アセット専用ワーカー」の場合、省略可
+}
