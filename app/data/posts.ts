@@ -12,8 +12,10 @@ export type Post = {
 
 // Vite/React RouterのビルドでMarkdownをraw文字列として読み込む
 const markdownModules = import.meta.glob("../content/*.md", {
-	as: "raw",
 	eager: true,
+	// Vite 6: `as: 'raw'` は非推奨。`query`+`import`でraw文字列を取得
+	query: "?raw",
+	import: "default",
 });
 
 const parsedPosts: Post[] = Object.entries(markdownModules).map(

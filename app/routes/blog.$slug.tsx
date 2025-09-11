@@ -1,18 +1,18 @@
-import { data, Link, useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
 import { getPostBySlug } from "../data/posts";
 import type { Route } from "./+types/blog.$slug";
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
 	const slug = params.slug ?? "";
 	const post = getPostBySlug(slug);
 	if (!post) {
-		throw data(
-			{ message: "見つかりません" },
-			{ status: 404, statusText: "見つかりません" },
-		);
+		throw new Response("見つかりません", {
+			status: 404,
+			statusText: "見つかりません",
+		});
 	}
-	return data({ post });
+	return { post };
 }
 
 export const meta: Route.MetaFunction = ({ data }) =>
@@ -24,7 +24,7 @@ export const meta: Route.MetaFunction = ({ data }) =>
 		: [{ title: "記事 | My Blog" }];
 
 export default function BlogPost() {
-	const { post } = useLoaderData<typeof loader>();
+	const { post } = useLoaderData<typeof clientLoader>();
 	return (
 		<article className={css({ display: "grid", gap: 4 })}>
 			<Link

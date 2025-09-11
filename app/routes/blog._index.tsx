@@ -1,11 +1,11 @@
-import { data, Link, useLoaderData } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
 import { getAllPosts } from "../data/posts";
 import type { Route } from "./+types/blog._index";
 
-export async function loader() {
+export async function clientLoader() {
 	const list = getAllPosts();
-	return data({ posts: list });
+	return { posts: list };
 }
 
 export const meta: Route.MetaFunction = () => [
@@ -14,7 +14,7 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function BlogIndex() {
-	const { posts } = useLoaderData<typeof loader>();
+	const { posts } = useLoaderData<typeof clientLoader>();
 	return (
 		<div className={css({ display: "grid", gap: 6 })}>
 			<h1 className={css({ fontSize: "2xl", fontWeight: "bold" })}>Blog</h1>

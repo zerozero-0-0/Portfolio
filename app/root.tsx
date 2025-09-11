@@ -2,6 +2,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import {
 	isRouteErrorResponse,
+	Link,
 	Links,
 	Meta,
 	Outlet,
@@ -55,9 +56,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 							p: 4,
 						})}
 					>
-						<a href="/" className={css({ fontWeight: "semibold" })}>
+						<Link to="/" className={css({ fontWeight: "semibold" })}>
 							My Blog
-						</a>
+						</Link>
 						<Nav />
 					</div>
 				</header>
