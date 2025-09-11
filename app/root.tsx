@@ -10,6 +10,8 @@ import {
 	ScrollRestoration,
 } from "react-router";
 import { css } from "styled-system/css";
+import { Container } from "./components/Container";
+import { Footer } from "./components/Footer";
 import { Nav } from "./components/Nav";
 
 export const links: Route.LinksFunction = () => [
@@ -40,29 +42,34 @@ export function Layout({ children }: { children: React.ReactNode }) {
 						position: "sticky",
 						top: 0,
 						zIndex: 10,
-						backdropFilter: "blur(8px)",
+						backdropFilter: "blur(10px)",
 						borderBottomWidth: "1px",
 						borderColor: { base: "gray.200", _dark: "gray.800" },
-						bg: { base: "rgba(255,255,255,0.8)", _dark: "rgba(0,0,0,0.5)" },
+						bg: {
+							base: "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.70))",
+							_dark:
+								"linear-gradient(180deg, rgba(0,0,0,0.50), rgba(0,0,0,0.35))",
+						},
 					})}
 				>
-					<div
-						className={css({
-							maxW: "1280px",
-							mx: "auto",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "space-between",
-							p: 4,
-						})}
-					>
-						<Link to="/" className={css({ fontWeight: "semibold" })}>
-							My Blog
-						</Link>
-						<Nav />
-					</div>
+					<Container>
+						<div
+							className={css({
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-between",
+								py: 4,
+							})}
+						>
+							<Link to="/" className={css({ fontWeight: "semibold" })}>
+								My Blog
+							</Link>
+							<Nav />
+						</div>
+					</Container>
 				</header>
-				{children}
+				<Container>{children}</Container>
+				<Footer />
 				<ScrollRestoration />
 				<Scripts />
 			</body>
