@@ -9,7 +9,7 @@ export async function clientLoader() {
 		const posts = mod.getAllPosts().slice(0, 3);
 		const tags = mod.getAllTags().slice(0, 10);
 		return { posts, tags };
-	} catch (e) {
+	} catch (_e) {
 		return { posts: [], tags: [] };
 	}
 }
