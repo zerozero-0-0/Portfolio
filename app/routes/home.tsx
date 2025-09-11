@@ -1,13 +1,17 @@
 import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
 import { TagBadge } from "../components/TagBadge";
-import { getAllPosts, getAllTags } from "../data/posts";
 import type { Route } from "./+types/home";
 
 export async function clientLoader() {
-	const posts = getAllPosts().slice(0, 3);
-	const tags = getAllTags().slice(0, 10);
-	return { posts, tags };
+	try {
+		const mod = await import("../data/posts");
+		const posts = mod.getAllPosts().slice(0, 3);
+		const tags = mod.getAllTags().slice(0, 10);
+		return { posts, tags };
+	} catch (e) {
+		return { posts: [], tags: [] };
+	}
 }
 
 export const meta: Route.MetaFunction = () => [
@@ -80,6 +84,15 @@ export default function Home() {
 					最近の投稿
 				</h2>
 				<ul className={css({ display: "grid", gap: 4 })}>
+					{posts.length === 0 && (
+						<li
+							className={css({
+								color: { base: "gray.600", _dark: "gray.400" },
+							})}
+						>
+							現在、表示できる投稿がありません。
+						</li>
+					)}
 					{posts.map((p) => (
 						<li
 							key={p.slug}
@@ -136,6 +149,15 @@ export default function Home() {
 					人気のタグ
 				</h2>
 				<div className={css({ display: "flex", gap: 2, flexWrap: "wrap" })}>
+					{tags.length === 0 && (
+						<span
+							className={css({
+								color: { base: "gray.600", _dark: "gray.400" },
+							})}
+						>
+							タグはまだありません。
+						</span>
+					)}
 					{tags.map((t) => (
 						<TagBadge key={t} tag={t} />
 					))}
