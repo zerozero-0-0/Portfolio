@@ -43,3 +43,15 @@ export function getAllPosts(): Post[] {
 export function getPostBySlug(slug: string): Post | null {
 	return parsedPosts.find((p) => p.slug === slug) ?? null;
 }
+
+export function getAllTags(): string[] {
+	const set = new Set<string>();
+	for (const p of parsedPosts) for (const t of p.tags) set.add(t);
+	return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+export function getPostsByTag(tag: string): Post[] {
+	return parsedPosts
+		.filter((p) => p.tags.includes(tag))
+		.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+}

@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
+import { TagBadge } from "../components/TagBadge";
 import { getAllPosts } from "../data/posts";
 import type { Route } from "./+types/blog._index";
 
@@ -58,6 +59,18 @@ export default function BlogIndex() {
 							>
 								{p.excerpt}
 							</p>
+							<div
+								className={css({
+									display: "flex",
+									gap: 2,
+									mt: 2,
+									flexWrap: "wrap",
+								})}
+							>
+								{(p as unknown as { tags: string[] }).tags.map((t) => (
+									<TagBadge key={t} tag={t} />
+								))}
+							</div>
 						</li>
 					),
 				)}

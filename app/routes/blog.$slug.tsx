@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
+import { TagBadge } from "../components/TagBadge";
 import { getPostBySlug } from "../data/posts";
 import type { Route } from "./+types/blog.$slug";
 
@@ -26,7 +27,22 @@ export const meta: Route.MetaFunction = ({ data }) =>
 export default function BlogPost() {
 	const { post } = useLoaderData<typeof clientLoader>();
 	return (
-		<article className={css({ display: "grid", gap: 4 })}>
+		<article
+			className={css({
+				display: "grid",
+				gap: 4,
+				// 簡易Typography
+				"& h2": { fontSize: "xl", fontWeight: "semibold", mt: 6 },
+				"& h3": { fontSize: "lg", fontWeight: "semibold", mt: 4 },
+				"& p": { mt: 3, lineHeight: 7 },
+				"& ul": { pl: 5, listStyle: "disc", mt: 3, display: "grid", gap: 1 },
+				"& code": {
+					bg: { base: "gray.100", _dark: "gray.800" },
+					px: 1,
+					rounded: "sm",
+				},
+			})}
+		>
 			<Link
 				to=".."
 				relative="path"
@@ -50,30 +66,13 @@ export default function BlogPost() {
 				>
 					{new Date(post.publishedAt).toLocaleString()}
 				</p>
-				<ul
-					className={css({
-						display: "flex",
-						gap: 2,
-						mt: 2,
-						fontSize: "xs",
-						color: { base: "gray.600", _dark: "gray.400" },
-					})}
+				<div
+					className={css({ display: "flex", gap: 2, mt: 2, flexWrap: "wrap" })}
 				>
 					{post.tags.map((t: string) => (
-						<li
-							key={t}
-							className={css({
-								px: 2,
-								py: 1,
-								rounded: "full",
-								borderWidth: "1px",
-								borderColor: { base: "gray.300", _dark: "gray.700" },
-							})}
-						>
-							#{t}
-						</li>
+						<TagBadge key={t} tag={t} />
 					))}
-				</ul>
+				</div>
 			</header>
 			<div
 				className={css({ lineHeight: "7", wordBreak: "break-word" })}
