@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "prepare": "panda codegen",
+    "predev": "panda codegen",
+    "prebuild": "panda codegen",
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
