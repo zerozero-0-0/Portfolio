@@ -1,10 +1,11 @@
 import hljs from "highlight.js";
 import { marked } from "marked";
 
-// 型定義上は公開されていないが、ランタイムには存在するためanyで扱う
-const SluggerCtor: new () => { slug: (text: string) => string } = (
-	marked as any
-).Slugger;
+type MarkedWithSlugger = typeof marked & {
+	Slugger: new () => { slug: (s: string) => string };
+};
+
+const SluggerCtor = (marked as MarkedWithSlugger).Slugger;
 
 import { markedHighlight } from "marked-highlight";
 
