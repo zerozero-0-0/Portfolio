@@ -1,5 +1,6 @@
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { css } from "styled-system/css";
+import { ArticleCard } from "../components/ArticleCard";
 import { getAllPosts } from "../data/posts";
 import type { Route } from "./+types/blog._index";
 
@@ -18,7 +19,13 @@ export default function BlogIndex() {
 	return (
 		<div className={css({ display: "grid", gap: 6 })}>
 			<h1 className={css({ fontSize: "2xl", fontWeight: "bold" })}>Blog</h1>
-			<ul className={css({ display: "grid", gap: 4 })}>
+			<div
+				className={css({
+					display: "grid",
+					gap: 4,
+					gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
+				})}
+			>
 				{posts.map(
 					(p: {
 						slug: string;
@@ -26,42 +33,16 @@ export default function BlogIndex() {
 						excerpt: string;
 						publishedAt: string;
 					}) => (
-						<li
+						<ArticleCard
 							key={p.slug}
-							className={css({
-								borderBottomWidth: "1px",
-								borderColor: { base: "gray.200", _dark: "gray.800" },
-								pb: 4,
-							})}
-						>
-							<h2 className={css({ fontSize: "xl", fontWeight: "semibold" })}>
-								<Link
-									to={p.slug}
-									className={css({ _hover: { textDecoration: "underline" } })}
-								>
-									{p.title}
-								</Link>
-							</h2>
-							<p
-								className={css({
-									fontSize: "sm",
-									color: { base: "gray.600", _dark: "gray.400" },
-								})}
-							>
-								{new Date(p.publishedAt).toLocaleDateString()}
-							</p>
-							<p
-								className={css({
-									mt: 2,
-									color: { base: "gray.800", _dark: "gray.200" },
-								})}
-							>
-								{p.excerpt}
-							</p>
-						</li>
+							slug={p.slug}
+							title={p.title}
+							excerpt={p.excerpt}
+							date={p.publishedAt}
+						/>
 					),
 				)}
-			</ul>
+			</div>
 		</div>
 	);
 }
