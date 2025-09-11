@@ -41,9 +41,11 @@ export default function Blog() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	return (
-		<div className="container mx-auto pt-16 p-4">
-			<h2 className="text-lg font-semibold">Blog Error</h2>
-			<p className="text-red-600">
+		<div className={css({ maxW: "1280px", mx: "auto", pt: 16, p: 4 })}>
+			<h2 className={css({ fontSize: "lg", fontWeight: "semibold" })}>
+				Blog Error
+			</h2>
+			<p className={css({ color: "red.600" })}>
 				{error instanceof Error ? error.message : "Unexpected error"}
 			</p>
 		</div>

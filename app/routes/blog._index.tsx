@@ -69,8 +69,10 @@ export default function BlogIndex() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	return (
 		<div>
-			<h2 className="text-lg font-semibold">一覧の読み込みに失敗しました</h2>
-			<p className="text-red-600">
+			<h2 className={css({ fontSize: "lg", fontWeight: "semibold" })}>
+				一覧の読み込みに失敗しました
+			</h2>
+			<p className={css({ color: "red.600" })}>
 				{error instanceof Error ? error.message : String(error)}
 			</p>
 		</div>

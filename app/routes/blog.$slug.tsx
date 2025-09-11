@@ -87,12 +87,20 @@ export default function BlogPost() {
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	return (
 		<div>
-			<h2 className="text-lg font-semibold">記事の読み込みに失敗しました</h2>
-			<p className="text-red-600">
+			<h2 className={css({ fontSize: "lg", fontWeight: "semibold" })}>
+				記事の読み込みに失敗しました
+			</h2>
+			<p className={css({ color: "red.600" })}>
 				{error instanceof Error ? error.message : String(error)}
 			</p>
-			<p className="mt-2">
-				<Link to="/blog" className="text-blue-600 hover:underline">
+			<p className={css({ mt: 2 })}>
+				<Link
+					to="/blog"
+					className={css({
+						color: "blue.600",
+						_hover: { textDecoration: "underline" },
+					})}
+				>
 					Blog一覧へ
 				</Link>
 			</p>
