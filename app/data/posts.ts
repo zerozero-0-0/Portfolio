@@ -1,5 +1,7 @@
 import matter from "gray-matter";
+import hljs from "highlight.js";
 import { marked } from "marked";
+import { markedHighlight } from "marked-highlight";
 
 export type Post = {
 	slug: string;
@@ -18,6 +20,35 @@ const markdownModules = import.meta.glob("../content/*.md", {
 	import: "default",
 });
 
+// Markedの拡張（GFM/見出しID/コードハイライト）
+marked.setOptions({ gfm: true });
+marked.use(
+	markedHighlight({
+		langPrefix: "hljs language-",
+		highlight(code, lang) {
+			try {
+				if (lang && hljs.getLanguage(lang)) {
+					return hljs.highlight(code, { language: lang }).value;
+				}
+			} catch {}
+			return hljs.highlightAuto(code).value;
+		},
+	}),
+);
+// 見出しにid付与（sluggerを利用）
+marked.use({
+	renderer: {
+		heading(text: string, level: number, _raw: string) {
+			const id = text
+				.toLowerCase()
+				.trim()
+				.replace(/[^a-z0-9\u00C0-\u024f]+/g, "-")
+				.replace(/^-+|-+$/g, "");
+			return `<h${level} id="${id}">${text}</h${level}>`;
+		},
+	},
+});
+
 const parsedPosts: Post[] = Object.entries(markdownModules).map(
 	([path, raw]) => {
 		const file = matter(String(raw));
@@ -29,7 +60,7 @@ const parsedPosts: Post[] = Object.entries(markdownModules).map(
 			? (file.data.tags as string[])
 			: [];
 		const excerpt = String(file.data.excerpt ?? "");
-		const bodyHtml = marked(file.content);
+		const bodyHtml = marked.parse(file.content) as string;
 		return { slug, title, excerpt, bodyHtml, publishedAt, tags };
 	},
 );

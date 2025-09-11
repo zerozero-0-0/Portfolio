@@ -1,5 +1,6 @@
 import { Link, useLoaderData } from "react-router";
 import { css } from "styled-system/css";
+import { Prose } from "../components/Prose";
 import { TagBadge } from "../components/TagBadge";
 import { getPostBySlug } from "../data/posts";
 import type { Route } from "./+types/blog.$slug";
@@ -74,11 +75,12 @@ export default function BlogPost() {
 					))}
 				</div>
 			</header>
-			<div
-				className={css({ lineHeight: "7", wordBreak: "break-word" })}
-				/* biome-ignore lint/security/noDangerouslySetInnerHtml: 自作記事（リポジトリ管理）のみをHTML化して表示するため */
-				dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
-			/>
+			<Prose>
+				<div
+					/* biome-ignore lint/security/noDangerouslySetInnerHtml: 自作記事（リポジトリ管理）のみをHTML化して表示するため */
+					dangerouslySetInnerHTML={{ __html: post.bodyHtml }}
+				/>
+			</Prose>
 		</article>
 	);
 }

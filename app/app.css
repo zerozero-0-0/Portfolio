@@ -1,2 +1,4 @@
 @import "../styled-system/styles.css";
+/* コードハイライト（highlight.jsのテーマ） */
+@import "highlight.js/styles/github.css";
 @layer reset, base, tokens, recipes, utilities;
