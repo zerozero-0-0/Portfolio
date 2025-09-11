@@ -43,10 +43,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	return (
 		<div className={css({ maxW: "1280px", mx: "auto", pt: 16, p: 4 })}>
 			<h2 className={css({ fontSize: "lg", fontWeight: "semibold" })}>
-				Blog Error
+				エラー
 			</h2>
 			<p className={css({ color: "red.600" })}>
-				{error instanceof Error ? error.message : "Unexpected error"}
+				{error instanceof Error ? error.message : "不明なエラーが発生しました"}
 			</p>
 		</div>
 	);

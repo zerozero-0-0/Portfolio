@@ -8,8 +8,8 @@ export async function loader({ params }: Route.LoaderArgs) {
 	const post = getPostBySlug(slug);
 	if (!post) {
 		throw data(
-			{ message: "Not Found" },
-			{ status: 404, statusText: "Not Found" },
+			{ message: "見つかりません" },
+			{ status: 404, statusText: "見つかりません" },
 		);
 	}
 	return data({ post });
