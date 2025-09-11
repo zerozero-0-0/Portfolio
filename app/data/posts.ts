@@ -1,5 +1,11 @@
 import hljs from "highlight.js";
 import { marked } from "marked";
+
+// 型定義上は公開されていないが、ランタイムには存在するためanyで扱う
+const SluggerCtor: new () => { slug: (text: string) => string } = (
+	marked as any
+).Slugger;
+
 import { markedHighlight } from "marked-highlight";
 
 export type Post = {
@@ -37,12 +43,10 @@ marked.use(
 // 見出しにid付与（sluggerを利用）
 marked.use({
 	renderer: {
+		// marked.Slugger() を用いて見出しIDを生成
 		heading(text: string, level: number, _raw: string) {
-			const id = text
-				.toLowerCase()
-				.trim()
-				.replace(/[^a-z0-9\u00C0-\u024f]+/g, "-")
-				.replace(/^-+|-+$/g, "");
+			const slugger = new SluggerCtor();
+			const id = slugger.slug(text);
 			return `<h${level} id="${id}">${text}</h${level}>`;
 		},
 	},
