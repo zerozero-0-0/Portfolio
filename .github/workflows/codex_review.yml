@@ -12,16 +12,37 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-      - name: Mention Codex
+      - name: Mention Codex (with delay & retry)
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number,
-              body: "@codex review"
-            });
+
+            const delay = (ms) => new Promise((r) => setTimeout(r, ms));
+
+            // 既存の同一コメントがあれば重複を避ける
+            const { data: comments } = await github.rest.issues.listComments({ owner, repo, issue_number, per_page: 100 });
+            const exists = comments.some((c) => c.user?.type === 'Bot' && c.user?.login?.includes('github-actions') && /@codex\s+review/i.test(c.body ?? ''));
+            if (exists) {
+              core.info('Codex mention already exists. Skipping.');
+              return;
+            }
+
+            // 初期待機（PR作成直後の準備待ち）
+            await delay(20000);
+
+            const body = "@codex review";
+            const maxRetries = 3;
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+              try {
+                await github.rest.issues.createComment({ owner, repo, issue_number, body });
+                core.info(`Codex mention posted (attempt ${attempt}).`);
+                return;
+              } catch (err) {
+                core.warning(`post failed (attempt ${attempt}): ${err.message}`);
+                if (attempt < maxRetries) await delay(10000);
+                else throw err;
+              }
+            }
