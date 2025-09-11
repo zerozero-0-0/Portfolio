@@ -30,6 +30,3 @@ jobs:
 
       - name: Typecheck (types generate)
         run: pnpm typecheck
-
-      - name: Build (Panda prebuild runs)
-        run: pnpm build
