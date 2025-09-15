@@ -1,3 +1,4 @@
+import AtCoder from "./atcoder";
 import Card from "./card";
 import Code from "./language_usage";
 export default function Home() {
@@ -5,6 +6,7 @@ export default function Home() {
 		<>
 			<Card />
 			<Code />
+			<AtCoder />
 		</>
 	);
 }

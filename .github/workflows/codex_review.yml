@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Wait for permissions to propagate
-        run: sleep 25
+        run: sleep 30
 
       - name: Post "@Codex review" comment
         uses: actions/github-script@v7
