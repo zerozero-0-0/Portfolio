@@ -43,15 +43,15 @@ export default function Code() {
 							})}
 						>
 							<span
-                                className={css({
-                                    boxSize: "8",
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    lineHeight: "0",
-                                    flexShrink: "0",
-                                })}
-                            >
+								className={css({
+									boxSize: "8",
+									display: "inline-flex",
+									alignItems: "center",
+									justifyContent: "center",
+									lineHeight: "0",
+									flexShrink: "0",
+								})}
+							>
 								<Icon
 									size={24}
 									aria-label={item.language}
