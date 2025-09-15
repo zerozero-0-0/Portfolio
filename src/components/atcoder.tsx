@@ -39,7 +39,7 @@ const rateText = cva({
 	variants: {
 		tone: {
 			gray: { bg: "gray.500" },
-			brown: { bg: "orange.800" },
+			brown: { bg: "orange.900" },
 			green: { bg: "green.500" },
 			cyan: { bg: "cyan.500" },
 			blue: { bg: "blue.500" },
