@@ -11,17 +11,20 @@ type Tone =
 	| "orange"
 	| "red";
 
-const rateToColor = (rate: number): Tone => {
-	if (rate < 400) return "gray";
-	if (rate < 800) return "brown";
-	if (rate < 1200) return "green";
-	if (rate < 1600) return "cyan";
-	if (rate < 2000) return "blue";
-	if (rate < 2400) return "yellow";
-	if (rate < 2800) return "orange";
-	return "red";
-};
+const RATING_COLORS: readonly [number, Tone][] = [
+	[400, "gray"],
+	[800, "brown"],
+	[1200, "green"],
+	[1600, "cyan"],
+	[2000, "blue"],
+	[2400, "yellow"],
+	[2800, "orange"],
+];
 
+const rateToColor = (rate: number): Tone => {
+	const color = RATING_COLORS.find(([threshold]) => rate < threshold)?.[1];
+	return color ?? "red";
+};
 const rateText = cva({
 	base: {
 		color: "white",
@@ -36,7 +39,7 @@ const rateText = cva({
 	variants: {
 		tone: {
 			gray: { bg: "gray.500" },
-			brown: { bg: "orange.500" },
+			brown: { bg: "brown.500" },
 			green: { bg: "green.500" },
 			cyan: { bg: "cyan.500" },
 			blue: { bg: "blue.500" },
