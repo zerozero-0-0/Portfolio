@@ -1,4 +1,4 @@
-export type languageData = {
+export type languageUsage = {
 	language: string;
-	per: number;
+	percentage: number;
 };

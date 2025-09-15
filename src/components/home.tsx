@@ -1,5 +1,5 @@
 import Card from "./card";
-import Code from "./code";
+import Code from "./language_usage";
 export default function Home() {
 	return (
 		<>
