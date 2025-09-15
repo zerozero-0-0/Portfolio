@@ -1,0 +1,28 @@
+import type { IconType } from "react-icons";
+import {
+	SiC,
+	SiCplusplus,
+	SiCss3,
+	SiHtml5,
+	SiJavascript,
+	SiPython,
+	SiRust,
+	SiTypescript,
+} from "react-icons/si";
+import { TbFileUnknown } from "react-icons/tb";
+import type { languageUsage } from "../types/language";
+
+const languageToIconMap: Record<string, IconType> = {
+	JavaScript: SiJavascript,
+	TypeScript: SiTypescript,
+	Python: SiPython,
+	Rust: SiRust,
+	Cpp: SiCplusplus,
+	C: SiC,
+	CSS: SiCss3,
+	HTML: SiHtml5,
+};
+
+export default function langToImg(data: languageUsage): IconType {
+	return languageToIconMap[data.language] || TbFileUnknown;
+}
