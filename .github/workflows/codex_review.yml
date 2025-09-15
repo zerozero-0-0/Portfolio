@@ -3,7 +3,6 @@ name: PR Codex Auto Comment
 on:
   pull_request_target:
     types: [opened]  # PR作成時に1回だけ
-  push:
 
 permissions:
   # 最小権限（コメント投稿に必要）
