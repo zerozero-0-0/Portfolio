@@ -7,23 +7,25 @@ export default function Card() {
 		<div
 			className={css({
 				w: "80%",
-                h: "auto",
+				h: "auto",
 				mx: "auto",
 				border: "2px solid gray",
-                borderRadius: "lg",
+				borderRadius: "lg",
 			})}
 		>
 			<p
-                className={css({
-                    textAlign: "center",
-                    fontSize: "4xl",
-                    fontWeight: "bold",
-                })}
-            >Hello, I'm Zrzr</p>
+				className={css({
+					textAlign: "center",
+					fontSize: "4xl",
+					fontWeight: "bold",
+				})}
+			>
+				Hello, I'm Zrzr
+			</p>
 			<div
 				className={css({
 					display: "flex",
-                    alignItems: "center",
+					alignItems: "center",
 				})}
 			>
 				<img
@@ -32,10 +34,10 @@ export default function Card() {
 					className={css({
 						width: "sm",
 						height: "sm",
-                        borderRadius: "100%",
+						borderRadius: "100%",
 					})}
 				/>
-                {STUDENT_STATUS()}
+				{STUDENT_STATUS()}
 			</div>
 		</div>
 	);
