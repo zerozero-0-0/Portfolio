@@ -1,13 +1,15 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
 	"vcs": {
-		"enabled": false,
+		"enabled": true,
 		"clientKind": "git",
-		"useIgnoreFile": false
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
 	},
 	"files": {
-		"ignoreUnknown": false,
-		"includes": ["src/**/*.{ts, tsx, js, jsx}"]
+		"ignoreUnknown": true,
+		"includes": ["**/*.{ts,tsx,js,jsx}"],
+		"experimentalScannerIgnores": ["worker-configuration.d.ts"]
 	},
 	"formatter": {
 		"enabled": true,
@@ -31,5 +33,13 @@
 				"organizeImports": "on"
 			}
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["worker-configuration.d.ts"],
+			"linter": {
+				"enabled": false
+			}
+		}
+	]
 }
