@@ -1,4 +1,4 @@
 export type languageData = {
-    language: string;
-    per: number;
+	language: string;
+	per: number;
 };
