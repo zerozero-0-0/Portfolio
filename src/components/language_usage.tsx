@@ -1,18 +1,18 @@
 import { FaCode } from "react-icons/fa";
 import { css } from "../../styled-system/css";
 import langToImg from "../lib/lang_to_img";
-import type { languageData } from "../types/language";
+import type { languageUsage } from "../types/language";
 
 // 将来的にapiから取得するようにする
-const data: languageData[] = [
-	{ language: "JavaScript", per: 20 },
-	{ language: "TypeScript", per: 27 },
-	{ language: "Python", per: 32 },
-	{ language: "Cpp", per: 15 },
-	{ language: "Other", per: 6 },
+const data: languageUsage[] = [
+	{ language: "JavaScript", percentage: 20 },
+	{ language: "TypeScript", percentage: 27 },
+	{ language: "Python", percentage: 32 },
+	{ language: "Cpp", percentage: 15 },
+	{ language: "Other", percentage: 6 },
 ];
 
-export default function Code() {
+export default function LanguageUsage() {
 	return (
 		<div
 			className={css({
@@ -58,7 +58,7 @@ export default function Code() {
 									title={item.language}
 								/>
 							</span>
-							<span>{item.per}%</span>
+							<span>{item.percentage}%</span>
 						</li>
 					);
 				})}
