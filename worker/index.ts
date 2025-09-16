@@ -62,6 +62,12 @@ async function aggregateLanguages(
 				continue;
 			}
 
+			if (response.status === 202) {
+				rejectedCount++;
+				console.warn("languages_url processing", response.url);
+				continue;
+			}
+
 			if (response.status === 204) {
 				console.log("Empty repository detected", response.url);
 				continue;
