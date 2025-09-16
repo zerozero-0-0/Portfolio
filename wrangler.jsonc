@@ -16,8 +16,8 @@
 	"kv_namespaces": [
 		{
 			"binding": "LANG_STATS",
-			"id": "2cc3b562db82456fb94a89c17eeb2c80",
-            "preview_id": "4257faad9fce48289834d9052b5aa44c"
+			"id": "${LANG_STATS_ID}",
+            "preview_id": "${LANG_STATS_PREVIEW_ID}"
 		}
 	],
     "vars": {
