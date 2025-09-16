@@ -6,208 +6,208 @@ const CACHE_TTL = 60 * 60; // 1 hour
 const MAX_CONCURRENT = 5;
 
 const corsHeaders = {
-    "Access-Control-Allow-Origin": "*", // development only
-    "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, content-type",
+	"Access-Control-Allow-Origin": "*", // development only
+	"Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+	"Access-Control-Allow-Headers": "Content-Type, content-type",
 };
 
 function isPreflight(req: Request): boolean {
-    return req.method === "OPTIONS" && req.headers.has("Origin");
+	return req.method === "OPTIONS" && req.headers.has("Origin");
 }
 
 function BuildCorsResponse<T>(body: T, init: ResponseInit = {}): Response {
-    return Response.json(body, {
-        ...init,
-        headers: {
-            ...corsHeaders,
-            ...(init.headers || {}),
-        },
-    });
+	return Response.json(body, {
+		...init,
+		headers: {
+			...corsHeaders,
+			...(init.headers || {}),
+		},
+	});
 }
 
 function buildCacheKey(username: string): string {
-    return `lang-summary:${username}`;
+	return `lang-summary:${username}`;
 }
 
 async function aggregateLanguages(
-    repos: GitHubRepo[],
-    headers: HeadersInit,
+	repos: GitHubRepo[],
+	headers: HeadersInit,
 ): Promise<FetchResult> {
-    const totals = new Map<string, number>();
+	const totals = new Map<string, number>();
 
-    for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
-        const slice = repos.slice(i, i + MAX_CONCURRENT);
-        const results = await Promise.allSettled(
-            slice.map((repo) => fetch(repo.languages_url, { headers })),
-        );
+	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
+		const slice = repos.slice(i, i + MAX_CONCURRENT);
+		const results = await Promise.allSettled(
+			slice.map((repo) => fetch(repo.languages_url, { headers })),
+		);
 
-        for (const result of results) {
-            if (result.status === "rejected") {
-                console.error("languages_url fetch failed:", result.reason);
-                continue;
-            }
+		for (const result of results) {
+			if (result.status === "rejected") {
+				console.error("languages_url fetch failed:", result.reason);
+				continue;
+			}
 
-            const response = result.value;
+			const response = result.value;
 
-            if (!response.ok) {
-                console.warn("languages_url fetch failed:", response.statusText);
-                continue;
-            }
+			if (!response.ok) {
+				console.warn("languages_url fetch failed:", response.statusText);
+				continue;
+			}
 
-            const payload = (await response.json()) as Record<string, number>;
-            console.log("Fetched languages:", payload);
-            for (const [lang, bytes] of Object.entries(payload)) {
-                totals.set(lang, (totals.get(lang) || 0) + bytes);
-            }
-        }
-    }
+			const payload = (await response.json()) as Record<string, number>;
+			console.log("Fetched languages:", payload);
+			for (const [lang, bytes] of Object.entries(payload)) {
+				totals.set(lang, (totals.get(lang) || 0) + bytes);
+			}
+		}
+	}
 
-    if (totals.size === 0) {
-        return {
-            ok: false,
-            errorMessage: "No language data found",
-        };
-    }
+	if (totals.size === 0) {
+		return {
+			ok: false,
+			errorMessage: "No language data found",
+		};
+	}
 
-    const summary = buildPercentages(totals);
-    return {
-        ok: true,
-        data: summary,
-        fetchedAt: Date.now(),
-    };
+	const summary = buildPercentages(totals);
+	return {
+		ok: true,
+		data: summary,
+		fetchedAt: Date.now(),
+	};
 }
 
 type LinkMap = Record<string, string>;
 
 function parseLinkHeader(header: string | null): LinkMap {
-    if (!header) return {};
-    return header.split(',').reduce((acc, part) => {
-        const match = part.match(/<([^>]+)>;\s*rel="([^"]+)"/);
-        if (match) {
-            const [, url, rel] = match;
-            acc[rel] = url;
-        }
-        return acc;
-    }, {} as LinkMap);
+	if (!header) return {};
+	return header.split(",").reduce((acc, part) => {
+		const match = part.match(/<([^>]+)>;\s*rel="([^"]+)"/);
+		if (match) {
+			const [, url, rel] = match;
+			acc[rel] = url;
+		}
+		return acc;
+	}, {} as LinkMap);
 }
 
 async function fetchAllRepos(
-    initialUrl: string,
-    headers: HeadersInit,
+	initialUrl: string,
+	headers: HeadersInit,
 ): Promise<GitHubRepo[] | FetchResult> {
-    const repos: GitHubRepo[] = [];
-    let url = initialUrl;
+	const repos: GitHubRepo[] = [];
+	let url = initialUrl;
 
-    while (url) {
-        const res = await fetch(url, { headers });
-        if (!res.ok) {
-            return {
-                ok: false,
-                statusCode: res.status,
-                errorMessage:
-                    res.status === 403
-                        ? "GitHub API rate limit exceeded"
-                        : `Failed to fetch repos: ${res.statusText}`,
-            };
-        }
+	while (url) {
+		const res = await fetch(url, { headers });
+		if (!res.ok) {
+			return {
+				ok: false,
+				statusCode: res.status,
+				errorMessage:
+					res.status === 403
+						? "GitHub API rate limit exceeded"
+						: `Failed to fetch repos: ${res.statusText}`,
+			};
+		}
 
-        const pageData = (await res.json()) as GitHubRepo[];
-        repos.push(...pageData);
+		const pageData = (await res.json()) as GitHubRepo[];
+		repos.push(...pageData);
 
-        const links = parseLinkHeader(res.headers.get("Link"));
-        url = links.next ?? null;
-    };
+		const links = parseLinkHeader(res.headers.get("Link"));
+		url = links.next ?? null;
+	}
 
-    return repos;
+	return repos;
 }
 
 async function fetchFromGitHub(env: Env): Promise<FetchResult> {
-    const headers: HeadersInit = {
-        "User-Agent": "zerozero-0-0/portfolio",
-        Accept: "application/vnd.github.v3+json",
-    };
+	const headers: HeadersInit = {
+		"User-Agent": "zerozero-0-0/portfolio",
+		Accept: "application/vnd.github.v3+json",
+	};
 
-    if (env.Lang_Usage_Token) {
-        headers.Authorization = `Bearer ${env.Lang_Usage_Token}`;
-    }
+	if (env.Lang_Usage_Token) {
+		headers.Authorization = `Bearer ${env.Lang_Usage_Token}`;
+	}
 
-    const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=public&sort=updated`;
+	const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=public&sort=updated`;
 
-    const repoResult = await fetchAllRepos(baseUrl, headers);
+	const repoResult = await fetchAllRepos(baseUrl, headers);
 
-    if (!Array.isArray(repoResult)) {
-        return repoResult;
-    }
+	if (!Array.isArray(repoResult)) {
+		return repoResult;
+	}
 
-    const activeRepos = repoResult.filter((repo) => !repo.fork && !repo.archived);
+	const activeRepos = repoResult.filter((repo) => !repo.fork && !repo.archived);
 
-    return aggregateLanguages(activeRepos, headers);
+	return aggregateLanguages(activeRepos, headers);
 }
 
 async function handleLanguageRequest(
-    env: Env,
-    ctx: ExecutionContext,
+	env: Env,
+	ctx: ExecutionContext,
 ): Promise<Response> {
-    const cacheKey = buildCacheKey(env.GITHUB_USERNAME);
-    const cached = (await env.LANG_STATS.get(cacheKey, { type: "json" })) as {
-        data: languageUsage[];
-        fetchedAt: number;
-    } | null;
+	const cacheKey = buildCacheKey(env.GITHUB_USERNAME);
+	const cached = (await env.LANG_STATS.get(cacheKey, { type: "json" })) as {
+		data: languageUsage[];
+		fetchedAt: number;
+	} | null;
 
-    if (cached && Date.now() - cached.fetchedAt < CACHE_TTL * 1000) {
-        return BuildCorsResponse({
-            data: cached.data,
-            cached: true,
-            fetchedAt: cached.fetchedAt,
-        });
-    }
+	if (cached && Date.now() - cached.fetchedAt < CACHE_TTL * 1000) {
+		return BuildCorsResponse({
+			data: cached.data,
+			cached: true,
+			fetchedAt: cached.fetchedAt,
+		});
+	}
 
-    const fresh = await fetchFromGitHub(env);
-    if (!fresh.ok) {
-        return BuildCorsResponse(
-            { error: fresh.errorMessage },
-            { status: fresh.statusCode ?? 502 },
-        );
-    }
+	const fresh = await fetchFromGitHub(env);
+	if (!fresh.ok) {
+		return BuildCorsResponse(
+			{ error: fresh.errorMessage },
+			{ status: fresh.statusCode ?? 502 },
+		);
+	}
 
-    ctx.waitUntil(
-        env.LANG_STATS.put(
-            cacheKey,
-            JSON.stringify({ data: fresh.data, fetchedAt: fresh.fetchedAt }),
-            { expirationTtl: CACHE_TTL },
-        ),
-    );
+	ctx.waitUntil(
+		env.LANG_STATS.put(
+			cacheKey,
+			JSON.stringify({ data: fresh.data, fetchedAt: fresh.fetchedAt }),
+			{ expirationTtl: CACHE_TTL },
+		),
+	);
 
-    return BuildCorsResponse({
-        data: fresh.data,
-        cached: false,
-        fetchedAt: fresh.fetchedAt,
-    });
+	return BuildCorsResponse({
+		data: fresh.data,
+		cached: false,
+		fetchedAt: fresh.fetchedAt,
+	});
 }
 
 export default {
-    async fetch(req, env, ctx) {
-        if (isPreflight(req)) {
-            return new Response(null, { headers: corsHeaders });
-        }
+	async fetch(req, env, ctx) {
+		if (isPreflight(req)) {
+			return new Response(null, { headers: corsHeaders });
+		}
 
-        const url = new URL(req.url);
+		const url = new URL(req.url);
 
-        if (req.method === "GET" && url.pathname === "/api/languages") {
-            return handleLanguageRequest(env, ctx);
-        }
+		if (req.method === "GET" && url.pathname === "/api/languages") {
+			return handleLanguageRequest(env, ctx);
+		}
 
-        return new Response(null, { status: 404 });
-    },
+		return new Response(null, { status: 404 });
+	},
 
-    // fetch(request) {
-    //     const url = new URL(request.url);
+	// fetch(request) {
+	//     const url = new URL(request.url);
 
-    //     if (url.pathname.startsWith("/api/")) {
-    //         return Response.json({
-    //             name: "Cloudflare",
-    //         });
-    //     }
-    //     return new Response(null, { status: 404 });
-    // },
+	//     if (url.pathname.startsWith("/api/")) {
+	//         return Response.json({
+	//             name: "Cloudflare",
+	//         });
+	//     }
+	//     return new Response(null, { status: 404 });
+	// },
 } satisfies ExportedHandler<Env>;
