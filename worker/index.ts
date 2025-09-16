@@ -35,6 +35,7 @@ async function aggregateLanguages(
 ): Promise<FetchResult> {
 	const totals = new Map<string, number>();
 	let rejectedCount = 0;
+	let pendingCount = 0;
 
 	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
 		const slice = repos.slice(i, i + MAX_CONCURRENT);
@@ -42,10 +43,17 @@ async function aggregateLanguages(
 			slice.map((repo) => fetch(repo.languages_url, { headers })),
 		);
 
-		for (const result of results) {
+		for (let index = 0; index < results.length; index++) {
+			const result = results[index];
+			const repo = slice[index];
+
 			if (result.status === "rejected") {
 				rejectedCount++;
-				console.error("languages_url fetch failed:", result.reason);
+				console.error(
+					"languages_url fetch failed:",
+					repo.full_name,
+					result.reason,
+				);
 				continue;
 			}
 
@@ -57,14 +65,15 @@ async function aggregateLanguages(
 					"languages_url return non-2xx",
 					response.status,
 					response.statusText,
+					repo.full_name,
 					response.url,
 				);
 				continue;
 			}
 
 			if (response.status === 202) {
-				rejectedCount++;
-				console.warn("languages_url processing", response.url);
+				pendingCount++;
+				console.info("languages_url processing", repo.full_name, response.url);
 				continue;
 			}
 
@@ -102,6 +111,12 @@ async function aggregateLanguages(
 			ok: false,
 			errorMessage: "No language data found",
 		};
+	}
+
+	if (pendingCount > 0) {
+		console.info(
+			`Skipped ${pendingCount} repositories with languages processing (HTTP 202)`,
+		);
 	}
 
 	const summary = buildPercentages(totals);
