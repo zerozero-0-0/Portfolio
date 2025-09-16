@@ -49,6 +49,15 @@ async function aggregateLanguages(
 
 			const response = result.value;
 
+			if (!response.ok) {
+				console.warn("languages_url return non-2xx", response.statusText);
+				return {
+					ok: false,
+					errorMessage: `GitHub API error: ${response.statusText}`,
+					statusCode: response.status,
+				};
+			}
+
 			if (response.status === 204) {
 				console.log("Empty repository detected", response.url);
 				continue;
