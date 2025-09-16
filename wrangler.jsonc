@@ -21,7 +21,8 @@
 		}
 	],
     "vars": {
-        "GITHUB_USERNAME": "zerozero-0-0"
+        "GITHUB_USERNAME": "zerozero-0-0",
+        "LANG_USAGE_TOKEN": "${LANG_USAGE_TOKEN}"
     }
 	/**
 	 * Smart Placement
