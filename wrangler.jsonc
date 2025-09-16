@@ -21,7 +21,7 @@
 		}
 	],
     "vars": {
-        "GITHUB_USERNAME": "zerozero-0-0",
+        "GITHUB_USERNAME": "${GITHUB_USERNAME}",
         "LANG_USAGE_TOKEN": "${LANG_USAGE_TOKEN}"
     }
 	/**
