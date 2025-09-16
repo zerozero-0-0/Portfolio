@@ -136,8 +136,8 @@ async function fetchFromGitHub(env: Env): Promise<FetchResult> {
 		Accept: "application/vnd.github.v3+json",
 	};
 
-	if (env.Lang_Usage_Token) {
-		headers.Authorization = `Bearer ${env.Lang_Usage_Token}`;
+	if (env.LANG_USAGE_TOKEN) {
+		headers.Authorization = `Bearer ${env.LANG_USAGE_TOKEN}`;
 	}
 
 	const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=public&sort=updated`;
