@@ -49,8 +49,8 @@ async function aggregateLanguages(
 
 			const response = result.value;
 
-			if (!response.ok) {
-				console.warn("languages_url fetch failed:", response.statusText);
+			if (response.status === 204) {
+				console.log("Empty repository detected", response.url);
 				continue;
 			}
 
