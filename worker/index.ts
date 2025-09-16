@@ -1,12 +1,170 @@
-export default {
-	fetch(request) {
-		const url = new URL(request.url);
+import type { languageUsage } from "../src/types/language";
+import type { GitHubRepo, FetchResult } from "../src/types/githubRepo";
+import buildPercentages from "../src/lib/calc_percentage";
 
-		if (url.pathname.startsWith("/api/")) {
-			return Response.json({
-				name: "Cloudflare",
-			});
-		}
-		return new Response(null, { status: 404 });
-	},
+const CACHE_TTL = 60 * 60; // 1 hour
+const MAX_CONCURRENT = 5;
+
+const corsHeaders = {
+    "Access-Control-Allow-Origin": "*", // development only
+    "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, content-type"
+};
+
+function isPreflight(req: Request): boolean {
+    return req.method === "OPTIONS" && req.headers.has("Origin");
+}
+
+function BuildCorsResponse<T>(body: T, init: ResponseInit = {}): Response {
+    return Response.json(body, {
+        ...init,
+        headers: {
+            ...corsHeaders,
+            ...(init.headers || {})
+        }
+    });
+}
+
+function buildCacheKey(username: string): string {
+    return `lang-summary:${username}`;
+}
+
+async function aggregateLanguages(repos: GitHubRepo[], headers: HeadersInit): Promise<FetchResult> {
+    const totals = new Map<string, number>();
+
+    for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
+        const slice = repos.slice(i, i + MAX_CONCURRENT);
+        const results = await Promise.allSettled(
+            slice.map((repo) => fetch(repo.languages_url, { headers }))
+        );
+
+        for (const result of results) {
+            if (result.status === "rejected") {
+                console.error("languages_url fetch failed:", result.reason);
+                continue;
+            }
+
+            const response = result.value;
+
+            if (!response.ok) {
+                console.warn("languages_url fetch failed:", response.statusText);
+                continue;
+            }
+
+            const payload = (await response.json()) as Record<string, number>;
+            console.log("Fetched languages:", payload);
+            for (const [lang, bytes] of Object.entries(payload)) {
+                totals.set(lang, (totals.get(lang) || 0) + bytes);
+            }
+        }
+    }
+
+    if (totals.size === 0) {
+        return {
+            ok: false,
+            errorMessage: "No language data found",
+        };
+    }
+
+    const summary = buildPercentages(totals);
+    return {
+        ok: true,
+        data: summary,
+        fetchedAt: Date.now()
+    };
+}
+
+async function fetchFromGitHub(env: Env): Promise<FetchResult> {
+    const headers: HeadersInit = {
+        "User-Agent": "zerozero-0-0/portfolio",
+        Accept: "application/vnd.github.v3+json"
+    };
+
+    if (env.Lang_Usage_Token) {
+        headers.Authorization = `Bearer ${env.Lang_Usage_Token}`;
+    }
+
+    const repoRes = await fetch(
+        `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=public&sort=updated`,
+        { headers }
+    );
+
+    if (!repoRes.ok) {
+        return {
+            ok: false,
+            statusCode: repoRes.status,
+            errorMessage:
+                repoRes.status === 403
+                    ? "GitHub API rate limit exceeded"
+                    : `Failed to fetch repos: ${repoRes.statusText}`,
+        };
+    }
+
+    const repos = (await repoRes.json()) as GitHubRepo[];
+    const activeRepos = repos.filter((repo) => !repo.fork && !repo.archived);
+
+    return aggregateLanguages(activeRepos, headers);
+};
+
+async function handleLanguageRequest(env: Env, ctx: ExecutionContext): Promise<Response> {
+    const cacheKey = buildCacheKey(env.GITHUB_USERNAME);
+    const cached = await env.LANG_STATS.get(cacheKey, { type: "json" }) as | { data: languageUsage[]; fetchedAt: number } | null;
+
+    if (cached && Date.now() - cached.fetchedAt < CACHE_TTL * 1000) {
+        return BuildCorsResponse({
+            data: cached.data,
+            cached: true,
+            fetchedAt: cached.fetchedAt
+        });
+    }
+
+    const fresh = await fetchFromGitHub(env);
+    if (!fresh.ok) {
+        return BuildCorsResponse(
+            { error: fresh.errorMessage },
+            { status: fresh.statusCode ?? 502 }
+        )
+    }
+
+    ctx.waitUntil(
+        env.LANG_STATS.put(
+            cacheKey,
+            JSON.stringify({ data: fresh.data, fetchedAt: fresh.fetchedAt }),
+            { expirationTtl: CACHE_TTL }
+        )
+    );
+
+    return BuildCorsResponse({
+        data: fresh.data,
+        cached: false,
+        fetchedAt: fresh.fetchedAt
+    });
+}
+
+
+export default {
+    async fetch(req, env, ctx) {
+        if (isPreflight(req)) {
+            return new Response(null, { headers: corsHeaders });
+        }
+
+        const url = new URL(req.url);
+
+        if (req.method === "GET" && url.pathname === "/api/languages") {
+            return handleLanguageRequest(env, ctx);
+        }
+
+        return new Response(null, { status: 404 });
+    }
+
+    // fetch(request) {
+    //     const url = new URL(request.url);
+
+    //     if (url.pathname.startsWith("/api/")) {
+    //         return Response.json({
+    //             name: "Cloudflare",
+    //         });
+    //     }
+    //     return new Response(null, { status: 404 });
+    // },
 } satisfies ExportedHandler<Env>;

@@ -5,6 +5,7 @@ declare namespace Cloudflare {
 	interface Env {
 		LANG_STATS: KVNamespace;
 		GITHUB_USERNAME: "zerozero-0-0";
+        Lang_Usage_Token?: string;
 	}
 }
 interface Env extends Cloudflare.Env {}
