@@ -1,3 +1,4 @@
+import calcPercentage from "../src/lib/calc_percentage";
 import buildPercentages from "../src/lib/calc_percentage";
 import type { FetchResult, GitHubRepo } from "../src/types/githubRepo";
 import type { languageUsage } from "../src/types/language";
@@ -31,9 +32,10 @@ function buildCacheKey(username: string): string {
 
 async function aggregateLanguages(
 	repos: GitHubRepo[],
-	headers: HeadersInit,
+	headers: Headers
 ): Promise<FetchResult> {
 	const totals = new Map<string, number>();
+    let rejectedCount = 0;
 
 	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
 		const slice = repos.slice(i, i + MAX_CONCURRENT);
@@ -43,6 +45,7 @@ async function aggregateLanguages(
 
 		for (const result of results) {
 			if (result.status === "rejected") {
+                rejectedCount++;
 				console.error("languages_url fetch failed:", result.reason);
 				continue;
 			}
@@ -50,12 +53,14 @@ async function aggregateLanguages(
 			const response = result.value;
 
 			if (!response.ok) {
-				console.warn("languages_url return non-2xx", response.statusText);
-				return {
-					ok: false,
-					errorMessage: `GitHub API error: ${response.statusText}`,
-					statusCode: response.status,
-				};
+                rejectedCount++;
+                console.warn(
+                    "languages_url return non-2xx",
+                    response.status,
+                    response.statusText,
+                    response.url
+                );
+                continue;
 			}
 
 			if (response.status === 204) {
@@ -69,6 +74,28 @@ async function aggregateLanguages(
 				totals.set(lang, (totals.get(lang) || 0) + bytes);
 			}
 		}
+
+        if (rejectedCount > 0) {
+            return {
+                ok: false,
+                errorMessage: `Failed to fetch language data for ${rejectedCount} repositories`,
+                statusCode: 502,
+            }
+        }
+
+        if (totals.size === 0) {
+            return {
+                ok: false,
+                errorMessage: "No language data found",
+                statusCode: 404,
+            }
+        }
+
+        return {
+            ok: true,
+            data: calcPercentage(totals),
+            fetchedAt: Date.now(),
+        }
 	}
 
 	if (totals.size === 0) {
