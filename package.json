@@ -10,7 +10,8 @@
 		"lint": "eslint .",
 		"preview": "pnpm run build && vite preview",
 		"deploy": "pnpm run build && wrangler deploy",
-		"cf-typegen": "wrangler types"
+		"cf-typegen": "wrangler types",
+        "check": "biome check --write"
 	},
 	"dependencies": {
 		"react": "^19.1.1",
