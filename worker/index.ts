@@ -131,13 +131,13 @@ async function fetchAllRepos(
 }
 
 async function fetchFromGitHub(env: Env): Promise<FetchResult> {
-	const headers: HeadersInit = {
+	const headers = new Headers({
 		"User-Agent": "zerozero-0-0/portfolio",
 		Accept: "application/vnd.github.v3+json",
-	};
+	});
 
 	if (env.LANG_USAGE_TOKEN) {
-		headers.Authorization = `Bearer ${env.LANG_USAGE_TOKEN}`;
+		headers.set("Authorization", `Bearer ${env.LANG_USAGE_TOKEN}`);
 	}
 
 	const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=public&sort=updated`;
