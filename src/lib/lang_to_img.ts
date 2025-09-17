@@ -8,6 +8,9 @@ import {
 	SiPython,
 	SiRust,
 	SiTypescript,
+    SiDocker,
+    SiMarkdown,
+    SiMake
 } from "react-icons/si";
 import { TbFileUnknown } from "react-icons/tb";
 import type { languageUsage } from "../types/language";
@@ -21,6 +24,9 @@ const languageToIconMap: Record<string, IconType> = {
 	C: SiC,
 	CSS: SiCss3,
 	HTML: SiHtml5,
+    Dockerfile: SiDocker,
+    Markdown: SiMarkdown,
+    Makefile: SiMake
 };
 
 export default function langToImg(data: languageUsage): IconType {
