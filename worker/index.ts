@@ -2,7 +2,7 @@ import buildPercentages from "../src/lib/calc_percentage";
 import type { FetchResult, GitHubRepo } from "../src/types/githubRepo";
 import type { languageUsage } from "../src/types/language";
 
-const CACHE_TTL = 60 * 60 * 24 * 7; // 1 week
+const CACHE_TTL_IN_SECONDS = 60 * 60 * 24 * 7; // 1 week
 const MAX_CONCURRENT = 5;
 
 const corsHeaders = {
@@ -204,7 +204,7 @@ async function handleLanguageRequest(
 		fetchedAt: number;
 	} | null;
 
-	if (cached && Date.now() - cached.fetchedAt < CACHE_TTL * 1000) {
+	if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_IN_SECONDS * 1000) {
 		return BuildCorsResponse({
 			data: cached.data,
 			cached: true,
@@ -224,7 +224,7 @@ async function handleLanguageRequest(
 		env.LANG_STATS.put(
 			cacheKey,
 			JSON.stringify({ data: fresh.data, fetchedAt: fresh.fetchedAt }),
-			{ expirationTtl: CACHE_TTL },
+			{ expirationTtl: CACHE_TTL_IN_SECONDS },
 		),
 	);
 
