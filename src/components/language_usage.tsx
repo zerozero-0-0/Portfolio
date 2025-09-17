@@ -42,8 +42,6 @@ export default function LanguageUsage() {
 				if ((error as Error).name !== "AbortError") {
 					console.error("Error fetching language data:", error);
 				}
-			} finally {
-				controller.abort();
 			}
 		}
 
