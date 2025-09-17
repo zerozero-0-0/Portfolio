@@ -1,6 +1,9 @@
+import { Hono } from "hono";
 import buildPercentages from "../src/lib/calc_percentage";
 import type { FetchResult, GitHubRepo } from "../src/types/githubRepo";
 import type { languageUsage } from "../src/types/language";
+
+const app = new Hono<{ Bindings: Env }>();
 
 const CACHE_TTL_IN_SECONDS = 60 * 60 * 24 * 7; // 1 week
 const MAX_CONCURRENT = 5;
@@ -11,9 +14,11 @@ const corsHeaders = {
 	"Access-Control-Allow-Headers": "Content-Type, content-type",
 };
 
-function isPreflight(req: Request): boolean {
-	return req.method === "OPTIONS" && req.headers.has("Origin");
-}
+app.options("*", () => new Response(null, { headers: corsHeaders }));
+
+app.get("/api/languages", (c) => handleLanguageRequest(c.env, c.executionCtx));
+
+app.notFound(() => new Response(null, { status: 404 }));
 
 function BuildCorsResponse<T>(body: T, init: ResponseInit = {}): Response {
 	return Response.json(body, {
@@ -235,29 +240,31 @@ async function handleLanguageRequest(
 	});
 }
 
-export default {
-	async fetch(req, env, ctx) {
-		if (isPreflight(req)) {
-			return new Response(null, { headers: corsHeaders });
-		}
+// export default {
+// 	async fetch(req, env, ctx) {
+// 		if (isPreflight(req)) {
+// 			return new Response(null, { headers: corsHeaders });
+// 		}
 
-		const url = new URL(req.url);
+// 		const url = new URL(req.url);
 
-		if (req.method === "GET" && url.pathname === "/api/languages") {
-			return handleLanguageRequest(env, ctx);
-		}
+// 		if (req.method === "GET" && url.pathname === "/api/languages") {
+// 			return handleLanguageRequest(env, ctx);
+// 		}
 
-		return new Response(null, { status: 404 });
-	},
+// 		return new Response(null, { status: 404 });
+// 	},
 
-	// fetch(request) {
-	//     const url = new URL(request.url);
+// 	// fetch(request) {
+// 	//     const url = new URL(request.url);
 
-	//     if (url.pathname.startsWith("/api/")) {
-	//         return Response.json({
-	//             name: "Cloudflare",
-	//         });
-	//     }
-	//     return new Response(null, { status: 404 });
-	// },
-} satisfies ExportedHandler<Env>;
+// 	//     if (url.pathname.startsWith("/api/")) {
+// 	//         return Response.json({
+// 	//             name: "Cloudflare",
+// 	//         });
+// 	//     }
+// 	//     return new Response(null, { status: 404 });
+// 	// },
+// } satisfies ExportedHandler<Env>;
+
+export default app;
