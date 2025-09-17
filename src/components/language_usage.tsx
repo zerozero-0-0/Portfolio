@@ -1,18 +1,57 @@
+import { useEffect, useState } from "react";
 import { FaCode } from "react-icons/fa";
 import { css } from "../../styled-system/css";
+import arrangeLangData from "../lib/arrange_lang_data";
 import langToImg from "../lib/lang_to_img";
 import type { languageUsage } from "../types/language";
 
-// 将来的にapiから取得するようにする
-const data: languageUsage[] = [
-	{ language: "JavaScript", percentage: 20 },
-	{ language: "TypeScript", percentage: 27 },
-	{ language: "Python", percentage: 32 },
-	{ language: "Cpp", percentage: 15 },
-	{ language: "Other", percentage: 6 },
-];
+const LANGUAGE_API_URL =
+	import.meta.env.VITE_LANGUAGE_USAGE_ENDPOINT ?? "/api/languages";
+
+type LanguageApiResponse = {
+	data?: languageUsage[];
+	error?: string;
+	cached?: boolean;
+	fetchedAt?: number;
+};
 
 export default function LanguageUsage() {
+	const [languages, setLanguages] = useState<languageUsage[]>([]);
+
+	useEffect(() => {
+		const controller = new AbortController();
+
+		async function load() {
+			try {
+				const res = await fetch(LANGUAGE_API_URL, {
+					signal: controller.signal,
+				});
+
+				if (!res.ok) {
+					throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+				}
+
+				const payload = (await res.json()) as LanguageApiResponse;
+
+				if (!payload.data) {
+					throw new Error(`API Error: ${payload.error}`);
+				}
+
+				setLanguages(arrangeLangData(payload.data));
+			} catch (error) {
+				if ((error as Error).name !== "AbortError") {
+					console.error("Error fetching language data:", error);
+				}
+			} finally {
+				controller.abort();
+			}
+		}
+
+		load();
+
+		return () => controller.abort();
+	}, []);
+
 	return (
 		<div
 			className={css({
@@ -30,7 +69,7 @@ export default function LanguageUsage() {
 					m: "0",
 				})}
 			>
-				{data.map((item) => {
+				{languages.map((item) => {
 					const Icon = langToImg(item);
 					return (
 						<li
