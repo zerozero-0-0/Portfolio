@@ -2,7 +2,7 @@ import buildPercentages from "../src/lib/calc_percentage";
 import type { FetchResult, GitHubRepo } from "../src/types/githubRepo";
 import type { languageUsage } from "../src/types/language";
 
-const CACHE_TTL = 60 * 60; // 1 hour
+const CACHE_TTL = 60 * 60 * 24 * 7; // 1 week
 const MAX_CONCURRENT = 5;
 
 const corsHeaders = {
