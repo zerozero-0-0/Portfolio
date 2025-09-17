@@ -13,14 +13,6 @@
 	"observability": {
 		"enabled": true
 	},
-    "kv_namespaces": [
-        {
-            "binding": "LANG_STATS",
-            "id": "${LANG_STATS_ID}",
-            "preview_id": "${LANG_STATS_PREVIEW_ID}"
-        }
-    ],
-
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
