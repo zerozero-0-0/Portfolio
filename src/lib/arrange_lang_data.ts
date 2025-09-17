@@ -4,19 +4,24 @@ import { languageToIconMap } from "./lang_to_img";
 export default function arrangeLangData(
 	data: languageUsage[],
 ): languageUsage[] {
-	const filteredData: languageUsage[] = [];
-	let others_sum = 0.0;
+	const { knownLanguages, othersPercentage } = data.reduce(
+		(acc, item) => {
+			if (item.language in languageToIconMap) {
+				acc.knownLanguages.push(item);
+			} else {
+				acc.othersPercentage += item.percentage;
+			}
+			return acc;
+		},
+		{ knownLanguages: [] as languageUsage[], othersPercentage: 0.0 },
+	);
 
-	for (const item of data) {
-		if (!(item.language in languageToIconMap)) {
-			others_sum += item.percentage;
-		} else {
-			filteredData.push(item);
-		}
-	}
-	if (others_sum > 0) {
-		filteredData.push({ language: "Other", percentage: others_sum });
+	if (othersPercentage > 0) {
+		knownLanguages.push({
+			language: "Others",
+			percentage: othersPercentage,
+		});
 	}
 
-	return filteredData;
+	return knownLanguages;
 }
