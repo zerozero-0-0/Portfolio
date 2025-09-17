@@ -15,7 +15,7 @@ import {
 import { TbFileUnknown } from "react-icons/tb";
 import type { languageUsage } from "../types/language";
 
-const languageToIconMap: Record<string, IconType> = {
+export const languageToIconMap: Record<string, IconType> = {
 	JavaScript: SiJavascript,
 	TypeScript: SiTypescript,
 	Python: SiPython,
