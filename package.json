@@ -8,7 +8,7 @@
 		"dev": "pnpm run dev:servers",
 		"dev:frontend": "vite",
 		"dev:backend": "wrangler dev",
-		"dev:servers": "bash -lc 'pnpm run dev:frontend & pnpm run dev:backend & wait'",
+        "dev:servers": "concurrently \"pnpm run dev:frontend\" \"pnpm run dev:backend\"",
 		"build": "tsc -b && vite build",
 		"lint": "biome lint .",
 		"preview": "pnpm run build && vite preview",
