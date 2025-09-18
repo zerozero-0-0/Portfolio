@@ -121,6 +121,7 @@ async function aggregateLanguages(
 		return {
 			ok: false,
 			errorMessage: "No language data found across repositories.",
+            statusCode: 404,
 		};
 	}
 
