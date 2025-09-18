@@ -13,7 +13,7 @@ export function createAtCoderLatestRateFetcher({
 		const url = `https://atcoder.jp/users/${username}/history/json`;
 
 		const res = await request(url, buildRequestInit());
-
+		console.log(url);
 		if (!res.ok) {
 			throw new Error(`Failed to fetch AtCoder history: ${res.status}`);
 		}
