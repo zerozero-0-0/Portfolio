@@ -8,7 +8,7 @@ declare namespace Cloudflare {
 		LANG_STATS_PREVIEW_ID: string;
 		GITHUB_USERNAME: string;
 		LANG_STATS: KVNamespace;
-        ATCODER_USERNAME: string;
+		ATCODER_USERNAME: string;
 	}
 }
 interface Env extends Cloudflare.Env {}

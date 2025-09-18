@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
+import { fetchLatestRate } from "./services/atcoder";
 import { fetchGitHubLanguageSummary } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
 
@@ -15,6 +16,11 @@ const corsHeaders = {
 app.options("*", () => new Response(null, { headers: corsHeaders }));
 
 app.get("/api/languages", (c) => handleLanguageRequest(c.env, c.executionCtx));
+
+app.get("/api/atcoder", async (c) => {
+	const latestRating = await fetchLatestRate(c.env);
+	return buildJsonResponse({ latestRating });
+});
 
 app.notFound(() => new Response(null, { status: 404 }));
 

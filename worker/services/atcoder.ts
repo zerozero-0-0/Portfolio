@@ -1,20 +1,43 @@
-export async function fetchLatestRate(
-    env: Env,
-) {
-    const url = `https://atcoder.jp/users/${env.ATCODER_USERNAME}/history/json`;
+type AtCoderHistoryEntry = {
+	NewRating: number;
+};
 
-    const res = await fetch(url);
-    if (!res.ok) {
-        throw new Error(`Failed to fetch AtCoder data: ${res.status} ${res.statusText}`);
-    }
+function isAtCoderHistoryEntry(value: unknown): value is AtCoderHistoryEntry {
+	if (typeof value !== "object" || value === null) {
+		return false;
+	}
 
-    const data = await res.json();
+	const record = value as Record<string, unknown>;
+	return typeof record.NewRating === "number";
+}
 
-    if (!Array.isArray(data) || data.length === 0) {
-        throw new Error("Unexpected AtCoder history response: empty or non-array payload");
-    }
+type AtCoderEnv = {
+	ATCODER_USERNAME: string;
+};
 
-    const latestEntry = data[data.length - 1];
+export async function fetchLatestRate(env: AtCoderEnv) {
+	const url = `https://atcoder.jp/users/${env.ATCODER_USERNAME}/history/json`;
 
-    return latestEntry.NewRating;
+	const res = await fetch(url);
+	if (!res.ok) {
+		throw new Error(
+			`Failed to fetch AtCoder data: ${res.status} ${res.statusText}`,
+		);
+	}
+
+	const payload = (await res.json()) as unknown;
+
+	if (!Array.isArray(payload) || payload.length === 0) {
+		throw new Error(
+			"Unexpected AtCoder history response: empty or non-array payload",
+		);
+	}
+
+	const latestEntry = payload[payload.length - 1];
+
+	if (!isAtCoderHistoryEntry(latestEntry)) {
+		throw new Error("Unexpected AtCoder history response: missing NewRating");
+	}
+
+	return latestEntry.NewRating;
 }
