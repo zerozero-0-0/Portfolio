@@ -1,5 +1,9 @@
+import { useEffect, useState } from "react";
 import { css, cva } from "../../styled-system/css";
 import atcoder_icon from "../assets/atcoder_icon.png";
+
+const RATE_API_URL =
+	import.meta.env.VITE_ATCODER_RATE_ENDPOINT ?? "/api/atcoder";
 
 type Tone =
 	| "gray"
@@ -51,9 +55,21 @@ const rateText = cva({
 });
 
 export default function AtCoder() {
-	// 将来的にはAPIから取得する
-	const algo_rate = 600;
-	const heuristic_rate = 500;
+	const [algoRate, setAlgoRate] = useState<number | null>(null);
+
+	useEffect(() => {
+		void (async () => {
+			try {
+				const res = await fetch(RATE_API_URL);
+				const payload = (await res.json()) as { latestRating: number };
+				setAlgoRate(payload.latestRating);
+			} catch (err) {
+				console.error("AtCoderレートの取得に失敗しました", err);
+			}
+		})();
+	}, []);
+
+	const tone = algoRate === null ? "gray" : rateToColor(algoRate);
 
 	return (
 		<div
@@ -78,18 +94,15 @@ export default function AtCoder() {
 				})}
 			>
 				<span>
-					Algo :{" "}
-					<span className={rateText({ tone: rateToColor(algo_rate) })}>
-						{algo_rate}
-					</span>
+					Algo : <span className={rateText({ tone })}>{algoRate ?? "-"}</span>
 				</span>
 
-				<span>
+				{/* <span>
 					Heuristic :{" "}
 					<span className={rateText({ tone: rateToColor(heuristic_rate) })}>
 						{heuristic_rate}
 					</span>
-				</span>
+				</span> */}
 			</div>
 		</div>
 	);
