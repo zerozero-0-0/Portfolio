@@ -1,0 +1,158 @@
+import buildPercentages from "../../src/lib/calc_percentage";
+import type { GitHubRepo } from "../../src/types/githubRepo";
+import type { languageUsage } from "../../src/types/language";
+import type { ApiFetchResult, ApiErrorResult } from "../types/api";
+
+const MAX_CONCURRENT = 5;
+
+type LinkMap = Record<string, string>;
+
+function parseLinkHeader(header: string | null): LinkMap {
+    if (!header) return {};
+    return header.split(",").reduce((acc, part) => {
+        const match = part.match(/<([^>]+)>;\s*rel="([^"]+)"/);
+        if (match) {
+            const [, url, rel] = match;
+            acc[rel] = url;
+        }
+        return acc;
+    }, {} as LinkMap);
+}
+
+async function fetchAllRepos(
+    initialUrl: string,
+    headers: HeadersInit,
+): Promise<GitHubRepo[] | ApiErrorResult> {
+    const repos: GitHubRepo[] = [];
+    let url: string | null = initialUrl;
+
+    while (url) {
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+            return {
+                ok: false,
+                statusCode: res.status,
+                errorMessage:
+                    res.status === 403
+                        ? "GitHub API rate limit exceeded"
+                        : `Failed to fetch repos: ${res.statusText}`,
+            };
+        }
+
+        const pageData = (await res.json()) as GitHubRepo[];
+        repos.push(...pageData);
+
+        const links = parseLinkHeader(res.headers.get("Link"));
+        url = links.next ?? null;
+    }
+
+    return repos;
+}
+
+async function aggregateLanguages(
+    repos: GitHubRepo[],
+    headers: Headers,
+): Promise<ApiFetchResult<languageUsage[]>> {
+    const totals = new Map<string, number>();
+    let rejectedCount = 0;
+    let pendingCount = 0;
+
+    for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
+        const slice = repos.slice(i, i + MAX_CONCURRENT);
+        const results = await Promise.allSettled(
+            slice.map((repo) => fetch(repo.languages_url, { headers })),
+        );
+
+        for (let idx = 0; idx < results.length; idx++) {
+            const result = results[idx];
+            const repo = slice[idx];
+
+            if (result.status === "rejected") {
+                rejectedCount++;
+                console.error("Failed to fetch languages for repo:", repo.full_name, result.reason);
+                continue;
+            }
+
+            const res = result.value;
+
+            if (!res.ok) {
+                rejectedCount++;
+                console.warn(
+                    "Non-2xx response fetching languages for repo:",
+                    res.status,
+                    res.statusText,
+                    repo.full_name,
+                    res.url,
+                );
+                continue;
+            }
+
+            if (res.status === 202) {
+                pendingCount++;
+                console.info("Languages processing for repo:", repo.full_name, res.url);
+                continue;
+            }
+
+            if (res.status === 204) {
+                console.log("No languages for repo:", repo.full_name, res.url);
+                continue;
+            }
+
+            const payload = (await res.json()) as Record<string, number>;
+            for (const [lang, bytes] of Object.entries(payload)) {
+                totals.set(lang, (totals.get(lang) || 0) + bytes);
+            }
+        }
+
+        if (rejectedCount > 0) {
+            return {
+                ok: false,
+                errorMessage: `Failed to fetch languages for ${rejectedCount} repositories.`,
+                statusCode: 502,
+            };
+        }
+    }
+
+    if (totals.size === 0) {
+        return {
+            ok: false,
+            errorMessage: "No language data found across repositories.",
+            
+        };
+    }
+
+    if (pendingCount > 0) {
+        console.info(`Language data pending for ${pendingCount} repositories.`);
+    }
+
+    const summary = buildPercentages(totals);
+    return {
+        ok: true,
+        data: summary,
+        fetchedAt: Date.now(),
+    };
+}
+
+export async function fetchGitHubLanguageSummary(
+    env: Env,
+): Promise<ApiFetchResult<languageUsage[]>> {
+    const headers = new Headers({
+        "User-Agent": "zerozero-0-0/portfolio",
+        Accept: "application/vnd.github.v3+json",
+    })
+
+    if (env.LANG_USAGE_TOKEN) {
+        headers.set("Authorization", `Bearer ${env.LANG_USAGE_TOKEN}`);
+    }
+
+    const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
+    const repoResult = await fetchAllRepos(baseUrl, headers);
+
+    if (!Array.isArray(repoResult)) {
+        return repoResult;
+    }
+
+    const activeRepos = repoResult.filter((repo) => !repo.fork && !repo.archived);
+    return aggregateLanguages(activeRepos, headers);
+}
+
