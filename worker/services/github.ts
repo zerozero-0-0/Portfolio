@@ -160,7 +160,9 @@ export function createGitHubLanguageSummaryFetcher({
 			return repoResult;
 		}
 
-		const activeRepos = repoResult.filter((repo) => !repo.fork && !repo.archived);
+		const activeRepos = repoResult.filter(
+			(repo) => !repo.fork && !repo.archived,
+		);
 		return aggregateLanguages(activeRepos, headers, request);
 	};
 }
