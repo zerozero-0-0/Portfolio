@@ -67,7 +67,7 @@ app.get("/api/atcoder", async (c) => {
 				error:
 					error instanceof Error
 						? error.message
-						: "AtCoder レートの取得に失敗しました",
+						: "Failed to fetch AtCoder rating",
 			},
 			{ status: 502 },
 		);

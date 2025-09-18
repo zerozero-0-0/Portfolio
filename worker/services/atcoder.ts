@@ -14,6 +14,10 @@ export function createAtCoderLatestRateFetcher({
 
 		const res = await request(url, buildRequestInit());
 
+        if (!res.ok) {
+            throw new Error(`Failed to fetch AtCoder history: ${res.status}`);
+        }
+
 		const payload = await res.json();
 
 		if (!Array.isArray(payload) || payload.length === 0) {
