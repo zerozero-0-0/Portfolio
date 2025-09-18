@@ -7,6 +7,11 @@ const MAX_CONCURRENT = 5;
 
 type LinkMap = Record<string, string>;
 
+type GitHubDependencies = {
+	request: (url: string, init?: RequestInit) => Promise<Response>;
+	buildHeaders: (token?: string) => Headers;
+};
+
 function parseLinkHeader(header: string | null): LinkMap {
 	if (!header) return {};
 	return header.split(",").reduce((acc, part) => {
@@ -22,12 +27,13 @@ function parseLinkHeader(header: string | null): LinkMap {
 async function fetchAllRepos(
 	initialUrl: string,
 	headers: HeadersInit,
+	request: GitHubDependencies["request"],
 ): Promise<GitHubRepo[] | ApiErrorResult> {
 	const repos: GitHubRepo[] = [];
 	let url: string | null = initialUrl;
 
 	while (url) {
-		const res = await fetch(url, { headers });
+		const res = await request(url, { headers });
 		if (!res.ok) {
 			return {
 				ok: false,
@@ -52,6 +58,7 @@ async function fetchAllRepos(
 async function aggregateLanguages(
 	repos: GitHubRepo[],
 	headers: Headers,
+	request: GitHubDependencies["request"],
 ): Promise<ApiFetchResult<languageUsage[]>> {
 	const totals = new Map<string, number>();
 	let rejectedCount = 0;
@@ -60,7 +67,7 @@ async function aggregateLanguages(
 	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
 		const slice = repos.slice(i, i + MAX_CONCURRENT);
 		const results = await Promise.allSettled(
-			slice.map((repo) => fetch(repo.languages_url, { headers })),
+			slice.map((repo) => request(repo.languages_url, { headers })),
 		);
 
 		for (let idx = 0; idx < results.length; idx++) {
@@ -137,25 +144,25 @@ async function aggregateLanguages(
 	};
 }
 
-export async function fetchGitHubLanguageSummary(
-	env: Env,
-): Promise<ApiFetchResult<languageUsage[]>> {
-	const headers = new Headers({
-		"User-Agent": "zerozero-0-0/portfolio",
-		Accept: "application/vnd.github.v3+json",
-	});
+export function createGitHubLanguageSummaryFetcher({
+	request,
+	buildHeaders,
+}: GitHubDependencies) {
+	return async function fetchGitHubLanguageSummary(
+		env: Env,
+	): Promise<ApiFetchResult<languageUsage[]>> {
+		const headers = buildHeaders(env.LANG_USAGE_TOKEN);
 
-	if (env.LANG_USAGE_TOKEN) {
-		headers.set("Authorization", `Bearer ${env.LANG_USAGE_TOKEN}`);
-	}
+		const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
+		const repoResult = await fetchAllRepos(baseUrl, headers, request);
 
-	const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
-	const repoResult = await fetchAllRepos(baseUrl, headers);
+		if (!Array.isArray(repoResult)) {
+			return repoResult;
+		}
 
-	if (!Array.isArray(repoResult)) {
-		return repoResult;
-	}
-
-	const activeRepos = repoResult.filter((repo) => !repo.fork && !repo.archived);
-	return aggregateLanguages(activeRepos, headers);
+		const activeRepos = repoResult.filter(
+			(repo) => !repo.fork && !repo.archived,
+		);
+		return aggregateLanguages(activeRepos, headers, request);
+	};
 }
