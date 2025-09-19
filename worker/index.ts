@@ -17,7 +17,7 @@ app.options("*", () => new Response(null, { headers: corsHeaders }));
 
 app.get("/api/languages", (c) => handleLanguageRequest(c.env, c.executionCtx));
 
-const EXTERNAL_REQUEST = async (url: string, init: RequestInit = {}) =>
+const fetchWithDefaultInit = async (url: string, init: RequestInit = {}) =>
     fetch(url, init);
 
 const buildGitHubHeaders = (token?: string): Headers => {
@@ -34,7 +34,7 @@ const buildGitHubHeaders = (token?: string): Headers => {
 };
 
 const fetchGitHubLanguageSummary = createGitHubLanguageSummaryFetcher({
-    request: EXTERNAL_REQUEST,
+    request: fetchWithDefaultInit,
     buildHeaders: buildGitHubHeaders,
 });
 
