@@ -1,53 +1,44 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import type { languageUsage } from "../src/types/language";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
 
-const app = new Hono<{ Bindings: Env }>();
+type AppEnv = {
+	Bindings: Env;
+	Variables: { allowedOrigin: string | null };
+};
+
+const app = new Hono<AppEnv>();
 
 const CACHE_TTL_IN_SECONDS = 60 * 60 * 24 * 7;
 const BASE_CORS_HEADERS = {
 	"Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
-	"Access-Control-Allow-Headers": "Content-Type",
+	"Access-Control-Allow-Headers":
+		"Content-Type,Accept,Accept-Language,Accept-Encoding,Authorization",
 } as const;
 
-app.options("*", (c) => {
-	const origin = c.req.header("Origin");
-
-    if (!origin) {
-        return new Response(null, { status: 204 });
-    }
-
-	const allowedOrigin = resolveAllowedOrigin(c.env, origin);
+app.use("*", async (c, next) => {
+	const origin = c.req.header("Origin") ?? null;
+	const allowedOrigin = origin ? resolveAllowedOrigin(c.env, origin) : null;
 
 	if (origin && !allowedOrigin) {
-		return new Response(null, { status: 403 });
+		return new Response(null, { status: 403, headers: buildCorsHeaders(null) });
 	}
 
-	return new Response(null, {
-		headers: buildCorsHeaders(allowedOrigin),
-	});
-});
+	c.set("allowedOrigin", allowedOrigin);
 
-app.get("/api/languages", (c) => {
-	const origin = c.req.header("Origin");
-
-    if (!origin) {
-        return new Response(null, { status: 204 });
-    }
-
-	const allowedOrigin = resolveAllowedOrigin(c.env, origin);
-
-	if (origin && !allowedOrigin) {
-		return buildJsonResponse(
-			{ error: "Origin not allowed" },
-			{ status: 403 },
-		);
+	if (c.req.method === "OPTIONS") {
+		return new Response(null, {
+			status: 204,
+			headers: buildCorsHeaders(allowedOrigin),
+		});
 	}
 
-	return handleLanguageRequest(c.env, c.executionCtx, allowedOrigin);
+	await next();
 });
+
+app.get("/api/languages", (c) => handleLanguageRequest(c));
 
 const fetchWithDefaultInit = async (url: string, init: RequestInit = {}) =>
 	fetch(url, init);
@@ -73,28 +64,15 @@ const fetchGitHubLanguageSummary = createGitHubLanguageSummaryFetcher({
 const fetchLatestAtCoderRate = createAtCoderLatestRateFetcher();
 
 app.get("/api/atcoder", async (c) => {
-	const origin = c.req.header("Origin");
-    if (!origin) {
-        return new Response(null, { status: 204 });
-    }
-	const allowedOrigin = resolveAllowedOrigin(c.env, origin);
-
-	if (origin && !allowedOrigin) {
-		return buildJsonResponse(
-			{ latestRating: null, error: "Origin not allowed" },
-			{ status: 403 },
-		);
-	}
-
 	const data = await fetchLatestAtCoderRate(c.env);
 	if (!data.ok) {
 		return buildJsonResponse(
+			c,
 			{ latestRating: null, error: "Failed to fetch AtCoder rating" },
 			{ status: 404 },
-			allowedOrigin,
 		);
 	}
-	return buildJsonResponse({ latestRating: data.rating }, undefined, allowedOrigin);
+	return buildJsonResponse(c, { latestRating: data.rating });
 });
 
 app.notFound(() => new Response(null, { status: 404 }));
@@ -104,15 +82,18 @@ function buildCacheKey(resource: string, identifier: string): string {
 }
 
 function buildJsonResponse<T>(
+	c: Context<AppEnv>,
 	body: T,
 	init: ResponseInit = {},
-	allowedOrigin: string | null = null,
 ): Response {
 	const headers = new Headers({
 		...BASE_CORS_HEADERS,
 		...init.headers,
 	});
 
+	headers.set("Vary", "Origin");
+
+	const allowedOrigin = c.get("allowedOrigin");
 	if (allowedOrigin) {
 		headers.set("Access-Control-Allow-Origin", allowedOrigin);
 	}
@@ -123,39 +104,35 @@ function buildJsonResponse<T>(
 	});
 }
 
-async function handleLanguageRequest(
-	env: Env,
-	ctx: ExecutionContext,
-	allowedOrigin: string | null,
-): Promise<Response> {
+async function handleLanguageRequest(c: Context<AppEnv>): Promise<Response> {
+	const { env, executionCtx } = c;
 	const result = await handleCachedRequest<languageUsage[]>(
 		env.LANG_STATS,
 		buildCacheKey("github-languages", env.GITHUB_USERNAME),
 		CACHE_TTL_IN_SECONDS,
 		() => fetchGitHubLanguageSummary(env),
-		ctx,
+		executionCtx,
 	);
 
 	if (!result.ok) {
 		return buildJsonResponse(
+			c,
 			{
 				error: result.errorMessage,
 			},
 			{
 				status: result.statusCode ?? 502,
 			},
-			allowedOrigin,
 		);
 	}
 
 	return buildJsonResponse(
+		c,
 		{
 			data: result.data,
 			cached: result.fromCache,
 			fetchedAt: result.fetchedAt,
 		},
-		undefined,
-		allowedOrigin,
 	);
 }
 
@@ -171,6 +148,7 @@ function resolveAllowedOrigin(env: Env, originHeader: string | null): string | n
 
 function buildCorsHeaders(allowedOrigin: string | null): Headers {
 	const headers = new Headers(BASE_CORS_HEADERS);
+	headers.set("Vary", "Origin");
 	if (allowedOrigin) {
 		headers.set("Access-Control-Allow-Origin", allowedOrigin);
 	}
