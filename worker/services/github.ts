@@ -62,7 +62,6 @@ async function aggregateLanguages(
 ): Promise<ApiFetchResult<languageUsage[]>> {
 	const totals = new Map<string, number>();
 	let rejectedCount = 0;
-	let pendingCount = 0;
 
 	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
 		const slice = repos.slice(i, i + MAX_CONCURRENT);
@@ -72,15 +71,9 @@ async function aggregateLanguages(
 
 		for (let idx = 0; idx < results.length; idx++) {
 			const result = results[idx];
-			const repo = slice[idx];
 
 			if (result.status === "rejected") {
 				rejectedCount++;
-				console.error(
-					"Failed to fetch languages for repo:",
-					repo.full_name,
-					result.reason,
-				);
 				continue;
 			}
 
@@ -88,24 +81,10 @@ async function aggregateLanguages(
 
 			if (!res.ok) {
 				rejectedCount++;
-				console.warn(
-					"Non-2xx response fetching languages for repo:",
-					res.status,
-					res.statusText,
-					repo.full_name,
-					res.url,
-				);
 				continue;
 			}
 
-			if (res.status === 202) {
-				pendingCount++;
-				console.info("Languages processing for repo:", repo.full_name, res.url);
-				continue;
-			}
-
-			if (res.status === 204) {
-				console.log("No languages for repo:", repo.full_name, res.url);
+			if (res.status === 202 || res.status === 204) {
 				continue;
 			}
 
@@ -132,9 +111,6 @@ async function aggregateLanguages(
 		};
 	}
 
-	if (pendingCount > 0) {
-		console.info(`Language data pending for ${pendingCount} repositories.`);
-	}
 
 	const summary = buildPercentages(totals);
 	return {
