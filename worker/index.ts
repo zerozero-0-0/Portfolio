@@ -17,7 +17,7 @@ app.options("*", () => new Response(null, { headers: corsHeaders }));
 
 app.get("/api/languages", (c) => handleLanguageRequest(c.env, c.executionCtx));
 
-const EXTERNAL_REQUEST = async (url: string, init: RequestInit = {}) =>
+const fetchWithDefaultInit = async (url: string, init: RequestInit = {}) =>
 	fetch(url, init);
 
 const buildGitHubHeaders = (token?: string): Headers => {
@@ -33,45 +33,22 @@ const buildGitHubHeaders = (token?: string): Headers => {
 	return headers;
 };
 
-const buildAtCoderRequestInit = (): RequestInit => ({
-	headers: new Headers({
-		"User-Agent": "portfolio-worker/1.0 (+https://github.com/zerozero-0-0)",
-		Accept: "application/json",
-		"Accept-Language": "ja,en-US;q=0.9,en;q=0.8",
-		Referer: "https://atcoder.jp/",
-	}),
-	cf: {
-		cacheEverything: true,
-		cacheTtl: 60 * 30,
-	},
-});
-
 const fetchGitHubLanguageSummary = createGitHubLanguageSummaryFetcher({
-	request: EXTERNAL_REQUEST,
+	request: fetchWithDefaultInit,
 	buildHeaders: buildGitHubHeaders,
 });
 
-const fetchLatestRate = createAtCoderLatestRateFetcher({
-	request: EXTERNAL_REQUEST,
-	buildRequestInit: buildAtCoderRequestInit,
-});
+const fetchLatestAtCoderRate = createAtCoderLatestRateFetcher();
 
 app.get("/api/atcoder", async (c) => {
-	try {
-		const latestRating = await fetchLatestRate(c.env);
-		return buildJsonResponse({ latestRating });
-	} catch (error) {
-		console.error("Failed to fetch AtCoder rating", error);
+	const data = await fetchLatestAtCoderRate(c.env);
+	if (!data.ok) {
 		return buildJsonResponse(
-			{
-				error:
-					error instanceof Error
-						? error.message
-						: "Failed to fetch AtCoder rating",
-			},
-			{ status: 502 },
+			{ error: "Failed to fetch AtCoder rating" },
+			{ status: 404 },
 		);
 	}
+	return buildJsonResponse({ rating: data.rating });
 });
 
 app.notFound(() => new Response(null, { status: 404 }));

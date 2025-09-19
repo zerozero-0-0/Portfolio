@@ -1,33 +1,42 @@
-type AtCoderDependencies = {
-	request: (url: string, init: RequestInit) => Promise<Response>;
-	buildRequestInit: () => RequestInit;
+type dataType = {
+	ok: boolean;
+	rating: number | null;
 };
 
-export function createAtCoderLatestRateFetcher({
-	request,
-	buildRequestInit,
-}: AtCoderDependencies) {
-	return async function fetchLatestRate(env: Env) {
+type KvRatingPayload = {
+	rating: number;
+	fetchedAt: number;
+};
+
+const CACHE_KEY_PREFIX = "atcoder-rate";
+const STALE_THRESHOLD_MS = 1000 * 60 * 60 * 24 * 14; // 14 days
+
+export function createAtCoderLatestRateFetcher() {
+	return async function fetchLatestRate(env: Env): Promise<dataType> {
 		const username = env.ATCODER_USERNAME;
-
-		const url = `https://atcoder.jp/users/${username}/history/json`;
-
-		const res = await request(url, buildRequestInit());
-		console.log(url);
-		if (!res.ok) {
-			throw new Error(`Failed to fetch AtCoder history: ${res.status}`);
+		if (!username) {
+			throw new Error("AtCoder username is not set in environment variables.");
 		}
 
-		const payload = await res.json();
+		const cacheKey = `${CACHE_KEY_PREFIX}:${username}`;
+		const cached = await env.LANG_STATS.get<KvRatingPayload>(cacheKey, {
+			type: "json",
+		});
+		const now = Date.now();
 
-		if (!Array.isArray(payload) || payload.length === 0) {
-			throw new Error(
-				"Unexpected AtCoder history response: empty or non-array payload",
-			);
+		if (cached && typeof cached.rating === "number") {
+			const isFresh = now - cached.fetchedAt < STALE_THRESHOLD_MS;
+			if (isFresh) {
+				return {
+					ok: true,
+					rating: cached.rating,
+				};
+			}
 		}
 
-		const latestEntry = payload[payload.length - 1];
-
-		return latestEntry.NewRating;
+		return {
+			ok: false,
+			rating: null,
+		};
 	};
 }

@@ -1,0 +1,33 @@
+name: fetch AtCoder Rate
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: '0 21 * * *' # a.m. 6:00 UTC
+
+jobs:
+  update-rating:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Update AtCoder Rate in KV
+        run: node update-atcoder-rate.mjs
+        working-directory: .github/scripts
+
+        env:
+          ATCODER_USERNAME: ${{ secrets.ATCODER_USERNAME }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
+    
