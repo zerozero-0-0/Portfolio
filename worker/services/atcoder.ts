@@ -8,7 +8,7 @@ type KvRatingPayload = {
 	fetchedAt: number;
 };
 
-const CACHE_KEY_PREFIX = "atcoder-rating";
+const CACHE_KEY_PREFIX = "atcoder-rate";
 const STALE_THRESHOLD_MS = 1000 * 60 * 60 * 24 * 14; // 14 days
 
 export function createAtCoderLatestRateFetcher() {
