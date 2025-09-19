@@ -44,11 +44,11 @@ app.get("/api/atcoder", async (c) => {
 	const data = await fetchLatestAtCoderRate(c.env);
 	if (!data.ok) {
 		return buildJsonResponse(
-			{ error: "Failed to fetch AtCoder rating" },
+			{ latestRating: null, error: "Failed to fetch AtCoder rating" },
 			{ status: 404 },
 		);
 	}
-	return buildJsonResponse({ rating: data.rating });
+	return buildJsonResponse({ latestRating: data.rating });
 });
 
 app.notFound(() => new Response(null, { status: 404 }));
