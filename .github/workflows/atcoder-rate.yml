@@ -1,6 +1,9 @@
 name: fetch AtCoder Rate
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
   schedule:
     - cron: '0 21 * * *' # a.m. 6:00 UTC
