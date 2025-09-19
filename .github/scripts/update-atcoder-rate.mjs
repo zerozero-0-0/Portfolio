@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 const username = process.env.ATCODER_USERNAME;
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 const namespaceId = process.env.CLOUDFLARE_KV_NAMESPACE_ID;
