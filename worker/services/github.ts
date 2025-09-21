@@ -88,7 +88,7 @@ async function aggregateLanguages(
 			if (!res.ok) {
 				rejectedCount++;
 				console.error(
-					"None-2xx response fetching languages for repo:",
+					"Non-2xx response fetching languages for repo:",
 					res.status,
 					res.statusText,
 					repo.full_name,
