@@ -127,7 +127,8 @@ export function createGitHubLanguageSummaryFetcher({
 	return async function fetchGitHubLanguageSummary(
 		env: Env,
 	): Promise<ApiFetchResult<languageUsage[]>> {
-		const headers = buildHeaders(env.LANG_USAGE_TOKEN);
+        const token = env.LANG_USAGE_TOKEN ?? env.LANG_USAGE_TOKEN; // prod or dev
+		const headers = buildHeaders(token);
 
 		const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
 		const repoResult = await fetchAllRepos(baseUrl, headers, request);
