@@ -62,7 +62,6 @@ async function aggregateLanguages(
 ): Promise<ApiFetchResult<languageUsage[]>> {
 	const totals = new Map<string, number>();
 	let rejectedCount = 0;
-	let pendingCount = 0;
 
 	for (let i = 0; i < repos.length; i += MAX_CONCURRENT) {
 		const slice = repos.slice(i, i + MAX_CONCURRENT);
@@ -88,7 +87,7 @@ async function aggregateLanguages(
 
 			if (!res.ok) {
 				rejectedCount++;
-				console.warn(
+				console.error(
 					"Non-2xx response fetching languages for repo:",
 					res.status,
 					res.statusText,
@@ -98,14 +97,7 @@ async function aggregateLanguages(
 				continue;
 			}
 
-			if (res.status === 202) {
-				pendingCount++;
-				console.info("Languages processing for repo:", repo.full_name, res.url);
-				continue;
-			}
-
-			if (res.status === 204) {
-				console.log("No languages for repo:", repo.full_name, res.url);
+			if (res.status === 202 || res.status === 204) {
 				continue;
 			}
 
@@ -132,10 +124,6 @@ async function aggregateLanguages(
 		};
 	}
 
-	if (pendingCount > 0) {
-		console.info(`Language data pending for ${pendingCount} repositories.`);
-	}
-
 	const summary = buildPercentages(totals);
 	return {
 		ok: true,
@@ -151,7 +139,8 @@ export function createGitHubLanguageSummaryFetcher({
 	return async function fetchGitHubLanguageSummary(
 		env: Env,
 	): Promise<ApiFetchResult<languageUsage[]>> {
-		const headers = buildHeaders(env.LANG_USAGE_TOKEN);
+		const token = env.LANG_USAGE_TOKEN;
+		const headers = buildHeaders(token);
 
 		const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
 		const repoResult = await fetchAllRepos(baseUrl, headers, request);
