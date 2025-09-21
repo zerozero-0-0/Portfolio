@@ -139,7 +139,7 @@ export function createGitHubLanguageSummaryFetcher({
 	return async function fetchGitHubLanguageSummary(
 		env: Env,
 	): Promise<ApiFetchResult<languageUsage[]>> {
-		const token = env.LANG_USAGE_TOKEN ?? env.LANG_USAGE_TOKEN; // prod or dev
+		const token = env.LANG_USAGE_TOKEN;
 		const headers = buildHeaders(token);
 
 		const baseUrl = `https://api.github.com/users/${env.GITHUB_USERNAME}/repos?per_page=100&type=owner`;
