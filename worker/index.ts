@@ -86,10 +86,13 @@ function buildJsonResponse<T>(
 	body: T,
 	init: ResponseInit = {},
 ): Response {
-	const headers = new Headers({
-		...BASE_CORS_HEADERS,
-		...init.headers,
-	});
+	const headers = new Headers(BASE_CORS_HEADERS);
+    
+    if (init.headers) {
+        for (const [key, value] of new Headers(init.headers).entries()) {
+            headers.set(key, value);
+        }
+    }
 
 	headers.set("Vary", "Origin");
 
