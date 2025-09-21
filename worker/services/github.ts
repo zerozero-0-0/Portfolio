@@ -71,9 +71,15 @@ async function aggregateLanguages(
 
 		for (let idx = 0; idx < results.length; idx++) {
 			const result = results[idx];
+            const repo = slice[idx];
 
 			if (result.status === "rejected") {
 				rejectedCount++;
+                console.error(
+                    "Failed to fetch languages for repo:",
+                    repo.full_name,
+                    result.reason
+                );
 				continue;
 			}
 
@@ -81,6 +87,13 @@ async function aggregateLanguages(
 
 			if (!res.ok) {
 				rejectedCount++;
+                console.error(
+                    "None-2xx response fetching languages for repo:",
+                    res.status,
+                    res.statusText,
+                    repo.full_name,
+                    res.url
+                );
 				continue;
 			}
 
