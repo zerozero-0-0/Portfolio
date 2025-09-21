@@ -1,4 +1,4 @@
-import { Hono, type Context } from "hono";
+import { type Context, Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
@@ -126,22 +126,25 @@ async function handleLanguageRequest(c: Context<AppEnv>): Promise<Response> {
 		);
 	}
 
-	return buildJsonResponse(
-		c,
-		{
-			data: result.data,
-			cached: result.fromCache,
-			fetchedAt: result.fetchedAt,
-		},
-	);
+	return buildJsonResponse(c, {
+		data: result.data,
+		cached: result.fromCache,
+		fetchedAt: result.fetchedAt,
+	});
 }
 
-function resolveAllowedOrigin(env: Env, originHeader: string | null): string | null {
+function resolveAllowedOrigin(
+	env: Env,
+	originHeader: string | null,
+): string | null {
 	if (!originHeader) {
 		return null;
 	}
 
-	const allowedOrigins = env.ALLOWED_ORIGINS?.split(",").map((item) => item.trim()).filter(Boolean) ?? [];
+	const allowedOrigins =
+		env.ALLOWED_ORIGINS?.split(",")
+			.map((item) => item.trim())
+			.filter(Boolean) ?? [];
 
 	return allowedOrigins.includes(originHeader) ? originHeader : null;
 }
