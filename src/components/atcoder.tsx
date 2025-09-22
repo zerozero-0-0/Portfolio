@@ -60,6 +60,7 @@ export default function AtCoder() {
 	const [hasError, setHasError] = useState(false);
 
 	useEffect(() => {
+		const controller = new AbortController();
 		void (async () => {
 			try {
 				const res = await fetch(RATE_API_URL);
@@ -71,9 +72,14 @@ export default function AtCoder() {
 					console.error("AtCoderレートの取得に失敗しました", err);
 					setHasError(true);
 				}
+			} finally {
+				if (!controller.signal.aborted) {
+					setIsLoading(false);
+				}
 			}
-			setIsLoading(false);
 		})();
+
+		return () => controller.abort();
 	}, []);
 
 	const tone = algoRate === null ? "gray" : rateToColor(algoRate);
