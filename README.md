@@ -6,6 +6,7 @@ Cloudflare Workersにデプロイしています。
 
 ## 技術スタック
 - Vite + Reactをフルスタックフレームワークとして使用
+(なんでReact Routerにしなかったんだろうね)
 - React Routerでルーティングを管理
 - PandaCSS
 - Biome.js
