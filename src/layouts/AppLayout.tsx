@@ -32,7 +32,7 @@ export default function AppLayout() {
 						borderWidth: "1px",
 						borderColor: "gray.300",
 						overflow: "hidden",
-				})}
+					})}
 				>
 					<Sidebar />
 				</div>

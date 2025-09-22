@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Access from "./pages/Access";
 import Home from "./pages/home";

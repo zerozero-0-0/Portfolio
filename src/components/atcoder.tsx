@@ -190,7 +190,7 @@ export default function AtCoder() {
 								color: "gray.500",
 								textTransform: "uppercase",
 								letterSpacing: "widest",
-						})}
+							})}
 						>
 							Algo Rating
 						</span>
@@ -199,7 +199,7 @@ export default function AtCoder() {
 								fontSize: { base: "3xl", md: "4xl" },
 								fontWeight: "bold",
 								color: "gray.900",
-						})}
+							})}
 						>
 							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
 						</span>

@@ -22,7 +22,8 @@ const Links: LinkType[] = [
 		name: "GitHub",
 		url: "https://github.com/zerozero-0-0",
 		icon: FaGithub,
-		description: "主に個人開発と競技プログラミング関連のリポジトリを公開しています。",
+		description:
+			"主に個人開発と競技プログラミング関連のリポジトリを公開しています。",
 	},
 	{
 		name: "Twitter",
@@ -117,7 +118,7 @@ function LinkCard({ name, url, icon: Icon, color, description }: LinkType) {
 							className={css({
 								fontSize: "sm",
 								color: "gray.500",
-						})}
+							})}
 						>
 							{description}
 						</span>

@@ -91,7 +91,9 @@ export function Sidebar() {
 					{navItems.map((item) => (
 						<li
 							key={item.to}
-							className={css({ width: { base: "calc(50% - 0.5rem)", lg: "full" } })}
+							className={css({
+								width: { base: "calc(50% - 0.5rem)", lg: "full" },
+							})}
 						>
 							<NavLink
 								to={item.to}
@@ -111,7 +113,7 @@ export function Sidebar() {
 											? "gray.900"
 											: isPending
 												? "gray.100"
-											: "transparent",
+												: "transparent",
 										boxShadow: isActive ? "md" : "none",
 										transition: "background-color 0.2s ease, color 0.2s ease",
 										_hover: {

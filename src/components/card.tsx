@@ -26,7 +26,7 @@ export default function Card() {
 					display: "flex",
 					flexDirection: "column",
 					gap: { base: "3", md: "4" },
-			})}
+				})}
 			>
 				<p
 					className={css({
@@ -54,7 +54,7 @@ export default function Card() {
 					flexDirection: { base: "column", sm: "row" },
 					alignItems: { sm: "center" },
 					gap: { base: "5", sm: "6" },
-			})}
+				})}
 			>
 				<img
 					src={zrzrIcon}

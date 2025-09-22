@@ -8,7 +8,8 @@ export default function Home() {
 		<div
 			className={css({
 				minHeight: "100%",
-				background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 45%, #f1f5f9 100%)",
+				background:
+					"linear-gradient(135deg, #f8fafc 0%, #e2e8f0 45%, #f1f5f9 100%)",
 			})}
 		>
 			<div

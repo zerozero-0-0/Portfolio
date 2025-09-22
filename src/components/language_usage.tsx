@@ -67,7 +67,8 @@ export default function LanguageUsage() {
 		() => [...languages].sort((a, b) => b.percentage - a.percentage),
 		[languages],
 	);
-	const showEmpty = hasFetched && !isLoading && !hasError && arrangedLanguages.length === 0;
+	const showEmpty =
+		hasFetched && !isLoading && !hasError && arrangedLanguages.length === 0;
 
 	return (
 		<section
@@ -246,7 +247,8 @@ export default function LanguageUsage() {
 											display: "block",
 											height: "100%",
 											borderRadius: "inherit",
-											background: "linear-gradient(90deg, #22d3ee 0%, #6366f1 100%)",
+											background:
+												"linear-gradient(90deg, #22d3ee 0%, #6366f1 100%)",
 											transition: "width 0.4s ease",
 										})}
 										style={{ width: `${percentage}%` }}
