@@ -6,8 +6,9 @@ export const STUDENT_STATUS = () => {
 			className={css({
 				display: "flex",
 				flexDirection: "column",
-				gap: "2.5",
-				fontSize: "1.7rem",
+				gap: "2",
+				fontSize: { base: "lg", md: "xl" },
+				color: "gray.700",
 			})}
 		>
 			<span>Saitama University</span>

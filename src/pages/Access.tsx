@@ -1,5 +1,11 @@
 import type { IconType } from "react-icons";
-import { FaGithub, FaKaggle, FaMapMarkerAlt, FaTwitter } from "react-icons/fa";
+import {
+	FaExternalLinkAlt,
+	FaGithub,
+	FaKaggle,
+	FaMapMarkerAlt,
+	FaTwitter,
+} from "react-icons/fa";
 import { css } from "../../styled-system/css";
 import { Header } from "../utils/Header";
 
@@ -8,6 +14,7 @@ type LinkType = {
 	url: string;
 	icon: IconType;
 	color?: string;
+	description: string;
 };
 
 const Links: LinkType[] = [
@@ -15,29 +22,31 @@ const Links: LinkType[] = [
 		name: "GitHub",
 		url: "https://github.com/zerozero-0-0",
 		icon: FaGithub,
+		description:
+			"主に個人開発と競技プログラミング関連のリポジトリを公開しています。",
 	},
 	{
 		name: "Twitter",
 		url: "https://x.com/AaWlEw3pl899167",
 		icon: FaTwitter,
 		color: "#1DA1F2",
+		description: "開発の進捗やコンテスト参加の感想などを随時発信しています。",
 	},
 	{
 		name: "Kaggle",
 		url: "https://www.kaggle.com/zrzr00",
 		icon: FaKaggle,
 		color: "#20BEFF",
+		description: "データ分析コンペの記録とNotebookを共有しています。",
 	},
 ];
 
-function LinkCard({ name, url, icon: Icon, color }: LinkType) {
+function LinkCard({ name, url, icon: Icon, color, description }: LinkType) {
 	return (
 		<li
 			className={css({
 				listStyle: "none",
 				width: "100%",
-				display: "flex",
-				justifyContent: "center",
 			})}
 		>
 			<a
@@ -45,19 +54,83 @@ function LinkCard({ name, url, icon: Icon, color }: LinkType) {
 				target="_blank"
 				rel="noopener noreferrer"
 				className={css({
-					display: "inline-flex",
+					display: "flex",
 					alignItems: "center",
-					gap: "3",
-					color: "inherit",
+					justifyContent: "space-between",
+					gap: { base: "4", md: "6" },
 					textDecoration: "none",
-					p: 2,
-					width: "75%",
-					border: "1px solid {colors.gray.400}",
-					borderRadius: "xl",
+					color: "gray.800",
+					paddingInline: { base: "5", md: "6" },
+					paddingBlock: { base: "5", md: "6" },
+					borderRadius: "2xl",
+					border: "1px solid",
+					borderColor: "gray.200",
+					backgroundColor: "white",
+					boxShadow: "md",
+					transition: "transform 0.2s ease, box-shadow 0.2s ease",
+					_hover: {
+						transform: "translateY(-4px)",
+						boxShadow: "xl",
+						borderColor: "gray.300",
+					},
+					_focusVisible: {
+						outline: "3px solid #6366f1",
+						outlineOffset: "4px",
+					},
 				})}
 			>
-				<Icon color={color} />
-				<span>{name}</span>
+				<span
+					className={css({
+						display: "inline-flex",
+						alignItems: "center",
+						gap: { base: "4", md: "5" },
+					})}
+				>
+					<span
+						className={css({
+							boxSize: { base: "12", md: "14" },
+							display: "inline-flex",
+							alignItems: "center",
+							justifyContent: "center",
+							borderRadius: "xl",
+							backgroundColor: "gray.100",
+						})}
+					>
+						<Icon size={22} color={color} />
+					</span>
+					<span
+						className={css({
+							display: "flex",
+							flexDirection: "column",
+							gap: "1",
+						})}
+					>
+						<strong
+							className={css({
+								fontSize: { base: "lg", md: "xl" },
+								fontWeight: "semibold",
+								color: "gray.900",
+							})}
+						>
+							{name}
+						</strong>
+						<span
+							className={css({
+								fontSize: "sm",
+								color: "gray.500",
+							})}
+						>
+							{description}
+						</span>
+					</span>
+				</span>
+				<FaExternalLinkAlt
+					size={16}
+					className={css({
+						color: "gray.400",
+						flexShrink: 0,
+					})}
+				/>
 			</a>
 		</li>
 	);
@@ -65,24 +138,51 @@ function LinkCard({ name, url, icon: Icon, color }: LinkType) {
 
 export default function Access() {
 	return (
-		<div>
-			<Header
-				title="アクセス"
-				icon={{ type: "react-icon", icon: <FaMapMarkerAlt /> }}
-			/>
-			<ul
+		<div
+			className={css({
+				minHeight: "100%",
+				backgroundColor: "#f8fafc",
+				paddingBlock: { base: "12", md: "16" },
+				paddingInline: { base: "6", md: "12" },
+			})}
+		>
+			<div
 				className={css({
+					maxW: "960px",
+					mx: "auto",
 					display: "flex",
 					flexDirection: "column",
-					gap: "4",
-					alignItems: "center",
-					paddingInlineStart: "0",
+					gap: { base: "8", md: "10" },
 				})}
 			>
-				{Links.map((link) => (
-					<LinkCard key={link.name} {...link} />
-				))}
-			</ul>
+				<Header
+					title="アクセス"
+					icon={{ type: "react-icon", icon: <FaMapMarkerAlt /> }}
+				/>
+				<p
+					className={css({
+						fontSize: { base: "sm", md: "md" },
+						color: "gray.600",
+						lineHeight: "tall",
+					})}
+				>
+					開発や分析活動に関する最新情報を確認したい場合は、以下の公式アカウントをご覧ください。
+				</p>
+				<ul
+					className={css({
+						listStyle: "none",
+						padding: "0",
+						margin: "0",
+						display: "flex",
+						flexDirection: "column",
+						gap: { base: "5", md: "6" },
+					})}
+				>
+					{Links.map((link) => (
+						<LinkCard key={link.name} {...link} />
+					))}
+				</ul>
+			</div>
 		</div>
 	);
 }

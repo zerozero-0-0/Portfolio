@@ -1,12 +1,27 @@
-import { css } from "../styled-system/css";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import AppLayout from "./layouts/AppLayout";
 import Access from "./pages/Access";
+import Home from "./pages/home";
+
+const router = createBrowserRouter([
+	{
+		path: "/",
+		element: <AppLayout />,
+		children: [
+			{
+				index: true,
+				element: <Home />,
+			},
+			{
+				path: "access",
+				element: <Access />,
+			},
+		],
+	},
+]);
 
 function App() {
-	return (
-		<div className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-			<Access />
-		</div>
-	);
+	return <RouterProvider router={router} />;
 }
 
 export default App;

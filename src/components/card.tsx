@@ -4,41 +4,90 @@ import { STUDENT_STATUS } from "../constant";
 
 export default function Card() {
 	return (
-		<div
+		<section
 			className={css({
-				w: "80%",
-				h: "auto",
-				mx: "auto",
-				border: "2px solid gray",
-				borderRadius: "lg",
+				w: "full",
+				maxW: "100%",
+				borderRadius: "2xl",
+				border: "1px solid",
+				borderColor: "gray.200",
+				backgroundColor: "white",
+				boxShadow: "lg",
+				overflow: "hidden",
+				px: { base: "6", md: "8" },
+				py: { base: "8", md: "10" },
+				display: "flex",
+				flexDirection: "column",
+				gap: { base: "6", md: "8" },
 			})}
 		>
-			<p
-				className={css({
-					textAlign: "center",
-					fontSize: "4xl",
-					fontWeight: "bold",
-				})}
-			>
-				Hello, I'm Zrzr
-			</p>
 			<div
 				className={css({
 					display: "flex",
-					alignItems: "center",
+					flexDirection: "column",
+					gap: { base: "3", md: "4" },
+				})}
+			>
+				<p
+					className={css({
+						fontSize: { base: "3xl", md: "4xl" },
+						fontWeight: "bold",
+						lineHeight: "shorter",
+						color: "gray.900",
+					})}
+				>
+					Hello, I'm Zrzr
+				</p>
+				<p
+					className={css({
+						fontSize: { base: "md", md: "lg" },
+						color: "gray.600",
+						lineHeight: "tall",
+					})}
+				>
+					埼玉大学情報工学科の学生として、競技プログラミングとWeb開発を中心に学習と制作を続けています。
+				</p>
+			</div>
+			<div
+				className={css({
+					display: "flex",
+					flexDirection: { base: "column", sm: "row" },
+					alignItems: { sm: "center" },
+					gap: { base: "5", sm: "6" },
 				})}
 			>
 				<img
 					src={zrzrIcon}
 					alt="zrzr-icon"
 					className={css({
-						width: "sm",
-						height: "sm",
-						borderRadius: "100%",
+						width: { base: "8rem", md: "9rem" },
+						height: { base: "8rem", md: "9rem" },
+						borderRadius: "full",
+						objectFit: "cover",
+						boxShadow: "md",
 					})}
 				/>
-				{STUDENT_STATUS()}
+				<div
+					className={css({
+						display: "flex",
+						flexDirection: "column",
+						gap: "3",
+					})}
+				>
+					<span
+						className={css({
+							fontSize: "sm",
+							fontWeight: "semibold",
+							textTransform: "uppercase",
+							color: "gray.500",
+							letterSpacing: "widest",
+						})}
+					>
+						Profile
+					</span>
+					{STUDENT_STATUS()}
+				</div>
 			</div>
-		</div>
+		</section>
 	);
 }

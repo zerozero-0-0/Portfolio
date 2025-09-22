@@ -56,54 +56,174 @@ const rateText = cva({
 
 export default function AtCoder() {
 	const [algoRate, setAlgoRate] = useState<number | null>(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [hasError, setHasError] = useState(false);
 
 	useEffect(() => {
+		const controller = new AbortController();
 		void (async () => {
 			try {
-				const res = await fetch(RATE_API_URL);
+				const res = await fetch(RATE_API_URL, { signal: controller.signal });
 				const payload = (await res.json()) as { latestRating: number };
 				setAlgoRate(payload.latestRating);
+				setHasError(false);
 			} catch (err) {
-				console.error("AtCoderレートの取得に失敗しました", err);
+				if ((err as Error).name !== "AbortError") {
+					console.error("AtCoderレートの取得に失敗しました", err);
+					setHasError(true);
+				}
+			} finally {
+				if (!controller.signal.aborted) {
+					setIsLoading(false);
+				}
 			}
 		})();
+
+		return () => controller.abort();
 	}, []);
 
 	const tone = algoRate === null ? "gray" : rateToColor(algoRate);
 
 	return (
-		<div
+		<section
 			className={css({
-				w: "80%",
-				h: "auto",
-				mx: "auto",
+				w: "full",
+				maxW: "100%",
+				borderRadius: "2xl",
+				border: "1px solid",
+				borderColor: "gray.200",
+				backgroundColor: "white",
+				boxShadow: "lg",
+				px: { base: "6", md: "8" },
+				py: { base: "8", md: "10" },
+				display: "flex",
+				flexDirection: "column",
+				gap: { base: "6", md: "8" },
 			})}
 		>
-			<img
-				src={atcoder_icon}
-				alt="atcoder_icon"
-				className={css({
-					width: "9rem",
-					height: "9rem",
-				})}
-			/>
-			<div
+			<header
 				className={css({
 					display: "flex",
-					flexDirection: "column",
+					alignItems: "center",
+					gap: { base: "4", md: "5" },
 				})}
 			>
-				<span>
-					Algo : <span className={rateText({ tone })}>{algoRate ?? "-"}</span>
+				<span
+					className={css({
+						boxSize: "12",
+						display: "inline-flex",
+						alignItems: "center",
+						justifyContent: "center",
+						borderRadius: "xl",
+						backgroundColor: "gray.900",
+					})}
+				>
+					<img
+						src={atcoder_icon}
+						alt="AtCoderのロゴ"
+						className={css({
+							width: "70%",
+							height: "70%",
+							objectFit: "contain",
+						})}
+					/>
 				</span>
-
-				{/* <span>
-					Heuristic :{" "}
-					<span className={rateText({ tone: rateToColor(heuristic_rate) })}>
-						{heuristic_rate}
-					</span>
-				</span> */}
-			</div>
-		</div>
+				<div
+					className={css({
+						display: "flex",
+						flexDirection: "column",
+						gap: "1",
+					})}
+				>
+					<h2
+						className={css({
+							fontSize: { base: "xl", md: "2xl" },
+							fontWeight: "semibold",
+							color: "gray.900",
+						})}
+					>
+						AtCoder ランキング
+					</h2>
+					<p
+						className={css({
+							fontSize: "sm",
+							color: "gray.500",
+						})}
+					>
+						公式APIを用いて最新のアルゴリズムレートを取得しています。
+					</p>
+				</div>
+			</header>
+			{isLoading ? (
+				<p
+					className={css({
+						fontSize: "sm",
+						color: "gray.500",
+					})}
+				>
+					現在レートを取得しています...
+				</p>
+			) : hasError ? (
+				<p
+					className={css({
+						fontSize: "sm",
+						color: "red.500",
+					})}
+				>
+					レートを取得できませんでした。時間をおいて再度お試しください。
+				</p>
+			) : (
+				<div
+					className={css({
+						display: "flex",
+						flexDirection: { base: "column", sm: "row" },
+						alignItems: { sm: "center" },
+						justifyContent: "space-between",
+						gap: { base: "5", sm: "6" },
+					})}
+				>
+					<div
+						className={css({
+							display: "flex",
+							flexDirection: "column",
+							gap: "2",
+						})}
+					>
+						<span
+							className={css({
+								fontSize: "sm",
+								fontWeight: "semibold",
+								color: "gray.500",
+								textTransform: "uppercase",
+								letterSpacing: "widest",
+							})}
+						>
+							Algo Rating
+						</span>
+						<span
+							className={css({
+								fontSize: { base: "3xl", md: "4xl" },
+								fontWeight: "bold",
+								color: "gray.900",
+							})}
+						>
+							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
+						</span>
+					</div>
+					<div
+						className={css({
+							display: "flex",
+							flexDirection: "column",
+							gap: "2",
+							color: "gray.600",
+							fontSize: "sm",
+						})}
+					>
+						<span>このレートは直近のコンテスト結果を反映しています。</span>
+						<span>最高帯域の更新を目指して継続的に挑戦しています。</span>
+					</div>
+				</div>
+			)}
+		</section>
 	);
 }
