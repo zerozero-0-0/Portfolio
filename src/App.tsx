@@ -1,10 +1,9 @@
 import { css } from "../styled-system/css";
-import Home from "./components/home";
-
+import Access from "./pages/Access";
 function App() {
 	return (
 		<div className={css({ fontSize: "2xl", fontWeight: "bold" })}>
-			<Home />
+			<Access />
 		</div>
 	);
 }
