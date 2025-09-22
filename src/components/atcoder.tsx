@@ -63,7 +63,7 @@ export default function AtCoder() {
 		const controller = new AbortController();
 		void (async () => {
 			try {
-				const res = await fetch(RATE_API_URL);
+				const res = await fetch(RATE_API_URL, { signal: controller.signal });
 				const payload = (await res.json()) as { latestRating: number };
 				setAlgoRate(payload.latestRating);
 				setHasError(false);
