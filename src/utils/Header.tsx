@@ -37,8 +37,8 @@ export function Header({ title, icon }: { title: string; icon: IconProps }) {
 				<span
 					className={css({
 						display: "inline-block",
-						width: "24px",
-						height: "24px",
+						width: "36px",
+						height: "36px",
 					})}
 				>
 					<img

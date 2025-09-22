@@ -52,7 +52,7 @@ function LinkCard({ name, url, icon: Icon, color }: LinkType) {
 					textDecoration: "none",
 					p: 2,
 					width: "75%",
-					border: "1px solid #797a7aff",
+					border: "1px solid {colors.gray.400}",
 					borderRadius: "xl",
 				})}
 			>
