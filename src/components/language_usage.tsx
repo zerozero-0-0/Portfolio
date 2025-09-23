@@ -174,7 +174,7 @@ export default function LanguageUsage() {
 						},
 					})}
 				>
-					{arrangedLanguages.map((item, index) => {
+					{arrangedLanguages.map((item) => {
 						const Icon = langToImg(item);
 						const percentage = Math.min(item.percentage, 100);
 						return (
@@ -233,11 +233,10 @@ export default function LanguageUsage() {
 										</span>
 									</span>
 								</header>
-								<LanguageDoughnutChart
-									language={item.language}
-									percentage={percentage}
-									colorIndex={index}
-									className={css({
+									<LanguageDoughnutChart
+										language={item.language}
+										percentage={percentage}
+										className={css({
 										w: "full",
 										maxW: "140px",
 										mx: "auto",

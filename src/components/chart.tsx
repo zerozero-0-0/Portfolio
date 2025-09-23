@@ -39,14 +39,12 @@ export type LanguageDoughnutChartProps = {
 	language: string;
 	percentage: number;
 	className?: string;
-	colorIndex?: number;
 };
 
 export default function LanguageDoughnutChart({
 	language,
 	percentage,
 	className,
-	colorIndex = 0,
 }: LanguageDoughnutChartProps) {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const chartRef = useRef<ChartJS<"doughnut", number[], string> | null>(null);
@@ -78,6 +76,7 @@ export default function LanguageDoughnutChart({
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
+		pointerEvents: "none",
 	});
 
 	const valueTextClass = css({
@@ -90,7 +89,7 @@ export default function LanguageDoughnutChart({
 			? Math.min(Math.max(percentage, 0), 100)
 			: 0;
 		const other = Math.max(0, 100 - clamped);
-		const mainColor = getLanguageColor(language, colorIndex);
+		const mainColor = getLanguageColor(language);
 		const data: ChartData<"doughnut", number[], string> = {
 			labels: [language, "その他"],
 			datasets: [
@@ -103,12 +102,17 @@ export default function LanguageDoughnutChart({
 			],
 		};
 		return { chartData: data, primaryColor: mainColor, value: clamped };
-	}, [language, percentage, colorIndex]);
+	}, [language, percentage]);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) {
 			return;
+		}
+
+		if (chartRef.current) {
+			chartRef.current.destroy();
+			chartRef.current = null;
 		}
 
 		const existingChart = ChartJS.getChart(canvas);
@@ -120,6 +124,13 @@ export default function LanguageDoughnutChart({
 			chartRef.current = null;
 			return;
 		}
+
+		const { width, height } = canvas.getBoundingClientRect();
+		if (width === 0 || height === 0) {
+			return;
+		}
+		canvas.width = width;
+		canvas.height = height;
 
 		chartRef.current = new ChartJS(canvas, {
 			type: "doughnut",
