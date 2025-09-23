@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaCode } from "react-icons/fa";
 import { css } from "../../styled-system/css";
-import LanguageDoughnutChart from "./chart";
 import arrangeLangData from "../lib/arrange_lang_data";
 import langToImg from "../lib/lang_to_img";
 import type { languageUsage } from "../types/language";
+import LanguageDoughnutChart from "./chart";
 
 const LANGUAGE_API_URL =
 	import.meta.env.VITE_LANGUAGE_USAGE_ENDPOINT ?? "/api/languages";
@@ -197,7 +197,7 @@ export default function LanguageUsage() {
 										display: "flex",
 										alignItems: "center",
 										gap: "2",
-								})}
+									})}
 								>
 									<span
 										className={css({
@@ -227,7 +227,7 @@ export default function LanguageUsage() {
 												fontWeight: "semibold",
 												color: "gray.800",
 												fontSize: "sm",
-										})}
+											})}
 										>
 											{item.language}
 										</span>

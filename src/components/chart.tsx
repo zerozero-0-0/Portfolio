@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useRef } from "react";
 import {
 	ArcElement,
-	Chart as ChartJS,
-	DoughnutController,
 	type ChartData,
+	Chart as ChartJS,
 	type ChartOptions,
+	DoughnutController,
 	Legend,
 	Tooltip,
 } from "chart.js";
+import { useEffect, useMemo, useRef } from "react";
 import getLanguageColor from "../lib/language_color";
 
 ChartJS.register(DoughnutController, ArcElement, Legend, Tooltip);
@@ -143,7 +143,7 @@ export default function LanguageDoughnutChart({
 								color: primaryColor,
 								fontSize: "18px",
 								fontWeight: 600,
-						}}
+							}}
 						>
 							{value.toFixed(1)}%
 						</strong>
