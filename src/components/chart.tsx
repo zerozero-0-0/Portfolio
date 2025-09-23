@@ -8,6 +8,7 @@ import {
 	Tooltip,
 } from "chart.js";
 import { useEffect, useMemo, useRef } from "react";
+import { css, cx } from "../../styled-system/css";
 import getLanguageColor from "../lib/language_color";
 
 ChartJS.register(DoughnutController, ArcElement, Legend, Tooltip);
@@ -49,6 +50,40 @@ export default function LanguageDoughnutChart({
 }: LanguageDoughnutChartProps) {
 	const canvasRef = useRef<HTMLCanvasElement | null>(null);
 	const chartRef = useRef<ChartJS<"doughnut", number[], string> | null>(null);
+
+	const wrapperClass = css({
+		position: "relative",
+		w: "full",
+		height: "120px",
+	});
+
+	const canvasClass = css({
+		display: "block",
+		w: "full",
+		h: "full",
+	});
+
+	const emptyStateClass = css({
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		h: "full",
+		color: "gray.500",
+		fontSize: "sm",
+	});
+
+	const valueContainerClass = css({
+		position: "absolute",
+		inset: "0",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+	});
+
+	const valueTextClass = css({
+		fontSize: "lg",
+		fontWeight: "semibold",
+	});
 
 	const { chartData, primaryColor, value } = useMemo(() => {
 		const clamped = Number.isFinite(percentage)
@@ -99,47 +134,16 @@ export default function LanguageDoughnutChart({
 	}, [chartData]);
 
 	return (
-		<div
-			className={className}
-			style={{ position: "relative", width: "100%", height: "120px" }}
-		>
+		<div className={cx(wrapperClass, className)}>
 			{chartData.datasets[0]?.data.every((item) => item === 0) ? (
-				<div
-					style={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						height: "100%",
-						color: "#6b7280",
-						fontSize: "14px",
-					}}
-				>
-					表示可能なデータがありません。
-				</div>
+				<div className={emptyStateClass}>表示可能なデータがありません。</div>
 			) : (
 				<>
-					<canvas ref={canvasRef}>
+					<canvas ref={canvasRef} className={canvasClass}>
 						グラフを表示するにはcanvas要素をサポートするブラウザが必要です。
 					</canvas>
-					<div
-						style={{
-							position: "absolute",
-							top: "50%",
-							left: "50%",
-							transform: "translate(-50%, -50%)",
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							gap: "4px",
-						}}
-					>
-						<strong
-							style={{
-								color: primaryColor,
-								fontSize: "18px",
-								fontWeight: 600,
-							}}
-						>
+					<div className={valueContainerClass}>
+						<strong className={valueTextClass} style={{ color: primaryColor }}>
 							{value.toFixed(1)}%
 						</strong>
 					</div>
