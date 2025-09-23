@@ -76,11 +76,6 @@ export default function LanguageDoughnutChart({
 			return;
 		}
 
-		if (chartRef.current) {
-			chartRef.current.destroy();
-			chartRef.current = null;
-		}
-
 		const existingChart = ChartJS.getChart(canvas);
 		if (existingChart) {
 			existingChart.destroy();
