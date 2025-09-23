@@ -233,10 +233,10 @@ export default function LanguageUsage() {
 										</span>
 									</span>
 								</header>
-									<LanguageDoughnutChart
-										language={item.language}
-										percentage={percentage}
-										className={css({
+								<LanguageDoughnutChart
+									language={item.language}
+									percentage={percentage}
+									className={css({
 										w: "full",
 										maxW: "140px",
 										mx: "auto",
