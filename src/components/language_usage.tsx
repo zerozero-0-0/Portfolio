@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaCode } from "react-icons/fa";
 import { css } from "../../styled-system/css";
+import LanguageDoughnutChart from "./chart";
 import arrangeLangData from "../lib/arrange_lang_data";
 import langToImg from "../lib/lang_to_img";
 import type { languageUsage } from "../types/language";
@@ -166,94 +167,82 @@ export default function LanguageUsage() {
 						listStyle: "none",
 						p: "0",
 						m: "0",
-						display: "flex",
-						flexDirection: "column",
-						gap: { base: "5", md: "6" },
+						display: "grid",
+						gap: { base: "3", md: "4" },
+						gridTemplateColumns: {
+							base: "repeat(auto-fit, minmax(170px, 1fr))",
+						},
 					})}
 				>
-					{arrangedLanguages.map((item) => {
+					{arrangedLanguages.map((item, index) => {
 						const Icon = langToImg(item);
 						const percentage = Math.min(item.percentage, 100);
 						return (
 							<li
 								key={item.language}
 								className={css({
+									border: "1px solid",
+									borderColor: "gray.200",
+									borderRadius: "xl",
+									padding: "3",
 									display: "flex",
 									flexDirection: "column",
 									gap: "2",
+									backgroundColor: "gray.50",
+									minH: "175px",
 								})}
 							>
-								<div
+								<header
 									className={css({
 										display: "flex",
-										justifyContent: "space-between",
 										alignItems: "center",
-										gap: { base: "4", md: "6" },
-									})}
+										gap: "2",
+								})}
 								>
 									<span
 										className={css({
 											display: "inline-flex",
 											alignItems: "center",
-											gap: "3",
 										})}
 									>
 										<span
 											className={css({
-												boxSize: "10",
+												boxSize: "8",
 												display: "inline-flex",
 												alignItems: "center",
 												justifyContent: "center",
 												borderRadius: "md",
-												backgroundColor: "gray.100",
+												backgroundColor: "white",
 												color: "gray.700",
 											})}
 										>
 											<Icon
-												size={20}
+												size={16}
 												aria-label={item.language}
 												title={item.language}
 											/>
 										</span>
 										<span
 											className={css({
-												fontWeight: "medium",
+												fontWeight: "semibold",
 												color: "gray.800",
-											})}
+												fontSize: "sm",
+										})}
 										>
 											{item.language}
 										</span>
 									</span>
-									<span
-										className={css({
-											fontVariantNumeric: "tabular-nums",
-											color: "gray.600",
-											fontWeight: "medium",
-										})}
-									>
-										{percentage.toFixed(1)}%
-									</span>
-								</div>
-								<div
+								</header>
+								<LanguageDoughnutChart
+									language={item.language}
+									percentage={percentage}
+									colorIndex={index}
 									className={css({
-										height: "0.5rem",
-										borderRadius: "full",
-										backgroundColor: "gray.200",
-										overflow: "hidden",
+										w: "full",
+										maxW: "140px",
+										mx: "auto",
 									})}
-								>
-									<span
-										className={css({
-											display: "block",
-											height: "100%",
-											borderRadius: "inherit",
-											background:
-												"linear-gradient(90deg, #22d3ee 0%, #6366f1 100%)",
-											transition: "width 0.4s ease",
-										})}
-										style={{ width: `${percentage}%` }}
-									/>
-								</div>
+								/>
 							</li>
 						);
 					})}
