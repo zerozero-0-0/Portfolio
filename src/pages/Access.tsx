@@ -14,7 +14,6 @@ type LinkType = {
 	url: string;
 	icon: IconType;
 	color?: string;
-	description: string;
 };
 
 const Links: LinkType[] = [
@@ -22,26 +21,22 @@ const Links: LinkType[] = [
 		name: "GitHub",
 		url: "https://github.com/zerozero-0-0",
 		icon: FaGithub,
-		description:
-			"主に個人開発と競技プログラミング関連のリポジトリを公開しています。",
 	},
 	{
 		name: "Twitter",
 		url: "https://x.com/AaWlEw3pl899167",
 		icon: FaTwitter,
 		color: "#1DA1F2",
-		description: "開発の進捗やコンテスト参加の感想などを随時発信しています。",
 	},
 	{
 		name: "Kaggle",
 		url: "https://www.kaggle.com/zrzr00",
 		icon: FaKaggle,
 		color: "#20BEFF",
-		description: "データ分析コンペの記録とNotebookを共有しています。",
 	},
 ];
 
-function LinkCard({ name, url, icon: Icon, color, description }: LinkType) {
+function LinkCard({ name, url, icon: Icon, color }: LinkType) {
 	return (
 		<li
 			className={css({
@@ -114,14 +109,6 @@ function LinkCard({ name, url, icon: Icon, color, description }: LinkType) {
 						>
 							{name}
 						</strong>
-						<span
-							className={css({
-								fontSize: "sm",
-								color: "gray.500",
-							})}
-						>
-							{description}
-						</span>
 					</span>
 				</span>
 				<FaExternalLinkAlt
@@ -159,15 +146,6 @@ export default function Access() {
 					title="アクセス"
 					icon={{ type: "react-icon", icon: <FaMapMarkerAlt /> }}
 				/>
-				<p
-					className={css({
-						fontSize: { base: "sm", md: "md" },
-						color: "gray.600",
-						lineHeight: "tall",
-					})}
-				>
-					開発や分析活動に関する最新情報を確認したい場合は、以下の公式アカウントをご覧ください。
-				</p>
 				<ul
 					className={css({
 						listStyle: "none",

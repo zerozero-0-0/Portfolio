@@ -13,7 +13,7 @@ export const STUDENT_STATUS = () => {
 		>
 			<span>Saitama University</span>
 			<span>Faculty of Engineering</span>
-			<span>Department of Information Engineering</span>
+			<span>Information and Computer Sciences</span>
 			<span>2nd year</span>
 		</div>
 	);

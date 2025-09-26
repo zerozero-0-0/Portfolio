@@ -38,15 +38,6 @@ export default function Card() {
 				>
 					Hello, I'm Zrzr
 				</p>
-				<p
-					className={css({
-						fontSize: { base: "md", md: "lg" },
-						color: "gray.600",
-						lineHeight: "tall",
-					})}
-				>
-					埼玉大学情報工学科の学生として、競技プログラミングとWeb開発を中心に学習と制作を続けています。
-				</p>
 			</div>
 			<div
 				className={css({
