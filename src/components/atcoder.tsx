@@ -142,16 +142,8 @@ export default function AtCoder() {
 							color: "gray.900",
 						})}
 					>
-						AtCoder ランキング
+						AtCoder Rating
 					</h2>
-					<p
-						className={css({
-							fontSize: "sm",
-							color: "gray.500",
-						})}
-					>
-						公式APIを用いて最新のアルゴリズムレートを取得しています。
-					</p>
 				</div>
 			</header>
 			{isLoading ? (
@@ -182,34 +174,15 @@ export default function AtCoder() {
 						gap: { base: "5", sm: "6" },
 					})}
 				>
-					<div
+					<span
 						className={css({
-							display: "flex",
-							flexDirection: "column",
-							gap: "2",
+							fontSize: { base: "3xl", md: "4xl" },
+							fontWeight: "bold",
+							color: "gray.900",
 						})}
 					>
-						<span
-							className={css({
-								fontSize: "sm",
-								fontWeight: "semibold",
-								color: "gray.500",
-								textTransform: "uppercase",
-								letterSpacing: "widest",
-							})}
-						>
-							Algo Rating
-						</span>
-						<span
-							className={css({
-								fontSize: { base: "3xl", md: "4xl" },
-								fontWeight: "bold",
-								color: "gray.900",
-							})}
-						>
-							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
-						</span>
-					</div>
+						<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
+					</span>
 					<div
 						className={css({
 							display: "flex",
@@ -218,10 +191,7 @@ export default function AtCoder() {
 							color: "gray.600",
 							fontSize: "sm",
 						})}
-					>
-						<span>このレートは直近のコンテスト結果を反映しています。</span>
-						<span>最高帯域の更新を目指して継続的に挑戦しています。</span>
-					</div>
+					></div>
 				</div>
 			)}
 		</section>

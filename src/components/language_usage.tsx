@@ -124,14 +124,6 @@ export default function LanguageUsage() {
 					>
 						Language Data
 					</h2>
-					<p
-						className={css({
-							fontSize: "sm",
-							color: "gray.500",
-						})}
-					>
-						GitHubの活動データから、直近で扱っている言語の割合を自動集計しています。
-					</p>
 				</div>
 			</header>
 			{isLoading ? (
