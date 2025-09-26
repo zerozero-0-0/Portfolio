@@ -174,23 +174,15 @@ export default function AtCoder() {
 						gap: { base: "5", sm: "6" },
 					})}
 				>
-					<div
+					<span
 						className={css({
-							display: "flex",
-							flexDirection: "column",
-							gap: "2",
+							fontSize: { base: "3xl", md: "4xl" },
+							fontWeight: "bold",
+							color: "gray.900",
 						})}
 					>
-						<span
-							className={css({
-								fontSize: { base: "3xl", md: "4xl" },
-								fontWeight: "bold",
-								color: "gray.900",
-							})}
-						>
-							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
-						</span>
-					</div>
+						<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
+					</span>
 					<div
 						className={css({
 							display: "flex",
