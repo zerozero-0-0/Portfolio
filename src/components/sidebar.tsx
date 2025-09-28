@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { FaCompass, FaHome, FaMapMarkerAlt } from "react-icons/fa";
+import { FaHome, FaMapMarkerAlt } from "react-icons/fa";
+import { SlMenu } from "react-icons/sl";
 import { NavLink, type NavLinkRenderProps } from "react-router";
 import { css } from "../../styled-system/css";
 
@@ -57,7 +58,7 @@ export function Sidebar() {
 						color: "white",
 					})}
 				>
-					<FaCompass size={18} />
+					<SlMenu size={18} />
 				</span>
 				<div
 					className={css({
