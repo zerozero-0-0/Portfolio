@@ -3,6 +3,9 @@
 // Runtime types generated with workerd@1.20250906.0 2025-09-13
 declare namespace Cloudflare {
 	interface Env {
+		LANG_USAGE_TOKEN: string;
+		LANG_STATS_ID: string;
+		LANG_STATS_PREVIEW_ID: string;
 		LANG_STATS: KVNamespace;
 		GITHUB_USERNAME: string;
 		ATCODER_USERNAME: string;
