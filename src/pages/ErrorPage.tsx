@@ -58,7 +58,7 @@ export function ErrorPage() {
 	);
 }
 
-export function ErrorBoudary() {
+export function ErrorBoundary() {
 	return (
 		<AppLayout>
 			<ErrorPage />
