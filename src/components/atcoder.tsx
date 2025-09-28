@@ -88,7 +88,6 @@ export default function AtCoder() {
 		<section
 			className={css({
 				w: "full",
-				maxW: "100%",
 				borderRadius: "2xl",
 				border: "1px solid",
 				borderColor: "gray.200",
@@ -110,21 +109,20 @@ export default function AtCoder() {
 			>
 				<span
 					className={css({
-						boxSize: "12",
 						display: "inline-flex",
 						alignItems: "center",
 						justifyContent: "center",
 						borderRadius: "xl",
-						backgroundColor: "gray.900",
 					})}
 				>
 					<img
 						src={atcoder_icon}
 						alt="AtCoderのロゴ"
 						className={css({
-							width: "70%",
-							height: "70%",
-							objectFit: "contain",
+							w: 16,
+							h: 16,
+							border: "1.8px solid gray.200",
+							borderRadius: 16,
 						})}
 					/>
 				</span>

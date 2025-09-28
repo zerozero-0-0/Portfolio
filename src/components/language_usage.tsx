@@ -74,8 +74,6 @@ export default function LanguageUsage() {
 	return (
 		<section
 			className={css({
-				w: "full",
-				maxW: "100%",
 				borderRadius: "2xl",
 				border: "1px solid",
 				borderColor: "gray.200",
@@ -97,16 +95,16 @@ export default function LanguageUsage() {
 			>
 				<span
 					className={css({
-						boxSize: "12",
 						display: "inline-flex",
 						alignItems: "center",
 						justifyContent: "center",
 						borderRadius: "full",
-						background: "linear-gradient(135deg, #38bdf8 0%, #6366f1 100%)",
+						bg: "gray.500",
 						color: "white",
+						p: 3,
 					})}
 				>
-					<FaCode size={22} />
+					<FaCode size={24} />
 				</span>
 				<div
 					className={css({
