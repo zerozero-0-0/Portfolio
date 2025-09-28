@@ -16,7 +16,6 @@ export function ErrorPage() {
 		<div
 			className={css({
 				w: "full",
-				h: "100%",
 				mx: "auto",
 				alignItems: "center",
 				display: "flex",
