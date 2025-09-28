@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Route, useRouteError } from "react-router";
+import { isRouteErrorResponse, useRouteError } from "react-router";
 import { css } from "../../styled-system/css";
 import AppLayout from "../layouts/AppLayout";
 
@@ -57,10 +57,10 @@ export function ErrorPage() {
 	);
 }
 
-export function ErrorBoudary(){
-    return (
-        <AppLayout>
-            <ErrorPage />
-        </AppLayout>
-    )
+export function ErrorBoudary() {
+	return (
+		<AppLayout>
+			<ErrorPage />
+		</AppLayout>
+	);
 }
