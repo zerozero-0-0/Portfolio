@@ -121,8 +121,8 @@ export default function AtCoder() {
 						className={css({
 							w: 16,
 							h: 16,
-                            border: "1.8px solid gray.200",
-                            borderRadius: 16,
+							border: "1.8px solid gray.200",
+							borderRadius: 16,
 						})}
 					/>
 				</span>

@@ -99,9 +99,9 @@ export default function LanguageUsage() {
 						alignItems: "center",
 						justifyContent: "center",
 						borderRadius: "full",
-                        bg: "gray.500",
+						bg: "gray.500",
 						color: "white",
-                        p: 3,
+						p: 3,
 					})}
 				>
 					<FaCode size={24} />
