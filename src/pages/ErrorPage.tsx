@@ -16,12 +16,13 @@ export function ErrorPage() {
 		<div
 			className={css({
 				w: "full",
-				h: "100vh",
+				h: "100%",
 				mx: "auto",
 				alignItems: "center",
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "center",
+				mt: 36,
 				gap: 8,
 				bg: "gray.100",
 			})}
