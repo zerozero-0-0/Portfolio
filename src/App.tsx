@@ -1,20 +1,22 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Access from "./pages/Access";
+import { ErrorPage } from "./pages/ErrorPage";
 import Home from "./pages/home";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <AppLayout />,
+		Component: AppLayout,
+		errorElement: <ErrorPage />,
 		children: [
 			{
 				index: true,
-				element: <Home />,
+				Component: Home,
 			},
 			{
 				path: "access",
-				element: <Access />,
+				Component: Access,
 			},
 		],
 	},

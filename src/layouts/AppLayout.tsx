@@ -1,8 +1,13 @@
+import type { ReactNode } from "react";
 import { Outlet } from "react-router";
 import { css } from "../../styled-system/css";
 import { Sidebar } from "../components/sidebar";
 
-export default function AppLayout() {
+type AppLayoutProps = {
+	children?: ReactNode;
+};
+
+export default function AppLayout({ children }: AppLayoutProps) {
 	return (
 		<div
 			className={css({
@@ -45,7 +50,7 @@ export default function AppLayout() {
 					backgroundColor: "transparent",
 				})}
 			>
-				<Outlet />
+				{children ?? <Outlet />}
 			</main>
 		</div>
 	);
