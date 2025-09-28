@@ -1,22 +1,16 @@
-import { isRouteErrorResponse, useRouteError } from "react-router";
+import { isRouteErrorResponse, Route, useRouteError } from "react-router";
 import { css } from "../../styled-system/css";
+import AppLayout from "../layouts/AppLayout";
 
-function ClassifyError(routeError: unknown): string {
-	if (isRouteErrorResponse(routeError)) {
-		if (routeError.status === 404) {
-			return "お探しのページが見つかりませんでした";
-		}
-		return `${routeError.status} ${routeError.statusText}`;
-	} else if (routeError instanceof Error) {
-		return routeError.message;
-	} else {
-		return "予期しないエラーが発生しました";
+export function ErrorPage() {
+	const error = useRouteError();
+
+	let errorMessage = "Unknown Error";
+	if (isRouteErrorResponse(error)) {
+		errorMessage = `${error.status} ${error.statusText}`;
+	} else if (error instanceof Error) {
+		errorMessage = error.message;
 	}
-}
-
-export default function NotFound() {
-	const routeError = useRouteError();
-	const errorMessage = ClassifyError(routeError);
 
 	return (
 		<div
@@ -48,16 +42,9 @@ export default function NotFound() {
 					color: "blue.400",
 				})}
 			>
-				404 Not Found
+				{errorMessage}
 			</p>
 
-			<span
-				className={css({
-					textAlign: "center",
-				})}
-			>
-				{errorMessage}
-			</span>
 			<span
 				className={css({
 					fontSize: "xl",
@@ -68,4 +55,12 @@ export default function NotFound() {
 			</span>
 		</div>
 	);
+}
+
+export function ErrorBoudary(){
+    return (
+        <AppLayout>
+            <ErrorPage />
+        </AppLayout>
+    )
 }

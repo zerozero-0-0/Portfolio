@@ -1,22 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Access from "./pages/Access";
+import ErrorPage from "./pages/ErrorPage";
 import Home from "./pages/home";
-import NotFound from "./pages/NotFound";
-
-function AppErrorBoundary() {
-	return (
-		<AppLayout>
-			<NotFound />
-		</AppLayout>
-	);
-}
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		Component: AppLayout,
-		ErrorBoundary: AppErrorBoundary,
+		errorElement: <ErrorPage />,
 		children: [
 			{
 				index: true,
@@ -25,10 +17,6 @@ const router = createBrowserRouter([
 			{
 				path: "access",
 				Component: Access,
-			},
-			{
-				path: "*",
-				Component: NotFound,
 			},
 		],
 	},
