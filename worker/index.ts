@@ -3,6 +3,7 @@ import type { languageUsage } from "../src/types/language";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
+import { getPostBySlug, listArticles } from "./lib/parser";
 
 type AppEnv = {
 	Bindings: Env;
@@ -76,6 +77,20 @@ app.get("/api/atcoder", async (c) => {
 });
 
 app.notFound(() => new Response(null, { status: 404 }));
+
+app.get("/api/article", async (c) => {
+    const articles = listArticles().map(({ content, ...meta }) => meta);
+    return Response.json({ data: articles });
+})
+
+app.get("/api/article/:slug", async (c) => {
+    const slug = c.req.param("slug");
+    const result = getPostBySlug(slug);
+    if (!result) {
+        return new Response(null, { status: 404 });
+    }
+    return Response.json({ data: result });
+});
 
 function buildCacheKey(resource: string, identifier: string): string {
 	return `${resource}:${identifier}`;

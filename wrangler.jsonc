@@ -21,6 +21,9 @@
             "preview_id": "4257faad9fce48289834d9052b5aa44c"
         }
     ],
+    "compatibility_flags": [
+        "nodejs_compat"
+    ]
 
 	/**
 	 * Smart Placement

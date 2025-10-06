@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FaHome, FaMapMarkerAlt } from "react-icons/fa";
+import { FaHome, FaMapMarkerAlt, FaRegStickyNote } from "react-icons/fa";
 import { SlMenu } from "react-icons/sl";
 import { NavLink, type NavLinkRenderProps } from "react-router";
 import { css } from "../../styled-system/css";
@@ -23,6 +23,11 @@ const navItems: NavItem[] = [
 		to: "/access",
 		icon: <FaMapMarkerAlt />,
 	},
+    {
+        label: "ブログ",
+        to: "/blog",
+        icon: <FaRegStickyNote />,
+    }
 ];
 
 export function Sidebar() {
