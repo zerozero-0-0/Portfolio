@@ -1,5 +1,6 @@
 import { type Context, Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
+import { getPostByIdentifier, listArticles } from "./lib/parser";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
@@ -77,6 +78,25 @@ app.get("/api/atcoder", async (c) => {
 
 app.notFound(() => new Response(null, { status: 404 }));
 
+app.get("/api/article", (c) =>
+	buildJsonResponse(c, {
+		data: listArticles(),
+	}),
+);
+
+app.get("/api/article/:identifier", (c) => {
+	const identifier = c.req.param("identifier");
+	const result = getPostByIdentifier(identifier);
+	if (!result) {
+		return buildJsonResponse(
+			c,
+			{ error: "Article not found" },
+			{ status: 404 },
+		);
+	}
+	return buildJsonResponse(c, { data: result });
+});
+
 function buildCacheKey(resource: string, identifier: string): string {
 	return `${resource}:${identifier}`;
 }
@@ -89,9 +109,10 @@ function buildJsonResponse<T>(
 	const headers = new Headers(BASE_CORS_HEADERS);
 
 	if (init.headers) {
-		for (const [key, value] of new Headers(init.headers).entries()) {
+		const extraHeaders = new Headers(init.headers);
+		extraHeaders.forEach((value, key) => {
 			headers.set(key, value);
-		}
+		});
 	}
 
 	headers.set("Vary", "Origin");
