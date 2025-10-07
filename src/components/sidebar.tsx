@@ -23,11 +23,11 @@ const navItems: NavItem[] = [
 		to: "/access",
 		icon: <FaMapMarkerAlt />,
 	},
-    {
-        label: "ブログ",
-        to: "/blog",
-        icon: <FaRegStickyNote />,
-    }
+	{
+		label: "ブログ",
+		to: "/blog",
+		icon: <FaRegStickyNote />,
+	},
 ];
 
 export function Sidebar() {

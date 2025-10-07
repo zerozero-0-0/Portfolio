@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router";
 import AppLayout from "./layouts/AppLayout";
 import Access from "./pages/Access";
+import Blog from "./pages/Blog";
 import { ErrorBoundary } from "./pages/ErrorPage";
 import HomePage from "./pages/home";
-import Blog from "./pages/Blog";
 
 export const router = createBrowserRouter([
 	{
@@ -13,7 +13,7 @@ export const router = createBrowserRouter([
 		children: [
 			{ index: true, element: <HomePage /> },
 			{ path: "access", element: <Access /> },
-            { path: "blog", element: <Blog /> }
+			{ path: "blog", element: <Blog /> },
 		],
 	},
 ]);

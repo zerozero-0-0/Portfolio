@@ -1,8 +1,13 @@
+export type ArticleMeta = {
+	title: string;
+	createdAt: string; // ISO 8601 format
+	updatedAt: string; // ISO 8601 format
+
+	tags?: string[];
+	slug: string;
+};
+
 export type Article = {
-    title: string;
-    createdDate: string; // ISO 8601 format
-    updatedDate: string; // ISO 8601 format
-    tags?: string[];
-    slug: string;
-    path: string;
-}
+	meta: ArticleMeta;
+	content: string;
+};

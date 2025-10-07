@@ -1,9 +1,9 @@
 import { type Context, Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
+import { getPostBySlug, listArticles } from "./lib/parser";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
-import { getPostBySlug, listArticles } from "./lib/parser";
 
 type AppEnv = {
 	Bindings: Env;
@@ -78,18 +78,23 @@ app.get("/api/atcoder", async (c) => {
 
 app.notFound(() => new Response(null, { status: 404 }));
 
-app.get("/api/article", async (c) => {
-    const articles = listArticles().map(({ content, ...meta }) => meta);
-    return Response.json({ data: articles });
-})
+app.get("/api/article", (c) =>
+	buildJsonResponse(c, {
+		data: listArticles(),
+	}),
+);
 
-app.get("/api/article/:slug", async (c) => {
-    const slug = c.req.param("slug");
-    const result = getPostBySlug(slug);
-    if (!result) {
-        return new Response(null, { status: 404 });
-    }
-    return Response.json({ data: result });
+app.get("/api/article/:slug", (c) => {
+	const slug = c.req.param("slug");
+	const result = getPostBySlug(slug);
+	if (!result) {
+		return buildJsonResponse(
+			c,
+			{ error: "Article not found" },
+			{ status: 404 },
+		);
+	}
+	return buildJsonResponse(c, { data: result });
 });
 
 function buildCacheKey(resource: string, identifier: string): string {
@@ -104,9 +109,10 @@ function buildJsonResponse<T>(
 	const headers = new Headers(BASE_CORS_HEADERS);
 
 	if (init.headers) {
-		for (const [key, value] of new Headers(init.headers).entries()) {
+		const extraHeaders = new Headers(init.headers);
+		extraHeaders.forEach((value, key) => {
 			headers.set(key, value);
-		}
+		});
 	}
 
 	headers.set("Vary", "Origin");

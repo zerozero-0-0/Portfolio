@@ -1,7 +1,8 @@
 ---
-title: Sample
-CreatedAt: 2024-06-01
-UpdatedAt: 2024-06-01
+title: サンプル記事
+slug: sample
+createdAt: 2024-06-01
+updatedAt: 2024-06-10
 tags: [sample, example]
 ---
 
@@ -78,4 +79,3 @@ console.log('Hello, Markdown!');
 
 HTMLタグも使えます<br>
 <strong>太字（HTML）</strong>
-
