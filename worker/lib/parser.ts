@@ -138,5 +138,5 @@ function normalizeDate(value: unknown): string {
 			return date.toISOString();
 		}
 	}
-	return new Date().toISOString();
+    throw new Error(`Invalid or missing date in frontmatter: "${String(value)}"`);
 }
