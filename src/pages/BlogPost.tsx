@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { FaRegStickyNote } from "react-icons/fa";
 import { Link, useParams } from "react-router";
 import { css } from "../../styled-system/css";
 import type { Article } from "../types/Article";
+import { Header } from "../utils/Header";
 
 type ArticleState =
 	| { status: "idle" | "loading" }
@@ -76,8 +78,12 @@ export default function BlogPost() {
 	});
 
 	return (
-		<section className={styles.wrapper}>
+		<div className={styles.page}>
 			<div className={styles.container}>
+				<Header
+					title="ブログ"
+					icon={{ type: "react-icon", icon: <FaRegStickyNote /> }}
+				/>
 				<nav className={styles.breadcrumb}>
 					<Link to="/blog" className={styles.backLink}>
 						&larr; 記事一覧に戻る
@@ -85,7 +91,7 @@ export default function BlogPost() {
 				</nav>
 				{content}
 			</div>
-		</section>
+		</div>
 	);
 }
 
@@ -96,46 +102,39 @@ function renderContent(
 	switch (state.status) {
 		case "idle":
 		case "loading":
-			return (
-				<div className={styles.stateCard}>
-					<p className={styles.message}>記事を読み込んでいます…</p>
-				</div>
-			);
+			return <p className={styles.message}>記事を読み込んでいます…</p>;
 		case "error":
 			return (
-				<div className={styles.stateCard}>
-					<p className={styles.error}>
-						記事を表示できませんでした。
-						<br />
-						<small>詳細: {state.message}</small>
-					</p>
-				</div>
+				<p className={styles.error}>
+					記事を表示できませんでした。
+					<br />
+					<small>詳細: {state.message}</small>
+				</p>
 			);
 		case "success": {
 			const { meta, content } = state.data;
 			return (
 				<article className={styles.article}>
-					<header className={styles.header}>
-						<p className={styles.kicker}>Blog</p>
-						<h1 className={styles.title}>{meta.title}</h1>
-						<div className={styles.meta}>
+					<header className={styles.articleHeader}>
+						<h1 className={styles.articleTitle}>{meta.title}</h1>
+						<div className={styles.articleMeta}>
 							<time dateTime={meta.updatedAt}>
-								更新日: {utils.formatDate(meta.updatedAt)}
+								更新日 {utils.formatDate(meta.updatedAt)}
 							</time>
 							<span aria-hidden="true">・</span>
 							<time dateTime={meta.createdAt}>
-								公開日: {utils.formatDate(meta.createdAt)}
+								公開日 {utils.formatDate(meta.createdAt)}
 							</time>
-							{meta.tags?.length ? (
-								<ul className={styles.tagList}>
-									{meta.tags.map((tag) => (
-										<li key={tag} className={styles.tagItem}>
-											#{tag}
-										</li>
-									))}
-								</ul>
-							) : null}
 						</div>
+						{meta.tags?.length ? (
+							<ul className={styles.tagList}>
+								{meta.tags.map((tag) => (
+									<li key={tag} className={styles.tagItem}>
+										#{tag}
+									</li>
+								))}
+							</ul>
+						) : null}
 					</header>
 					<section
 						className={styles.content}
@@ -168,18 +167,18 @@ class NotFoundError extends Error {
 }
 
 const styles = {
-	wrapper: css({
+	page: css({
 		minHeight: "100%",
-		backgroundColor: "gray.100",
-		py: { base: "10", md: "16" },
+		backgroundColor: "#f8fafc",
+		paddingBlock: { base: "12", md: "16" },
+		paddingInline: { base: "6", md: "12" },
 	}),
 	container: css({
 		maxW: "960px",
 		mx: "auto",
-		px: { base: "6", md: "10" },
 		display: "flex",
 		flexDirection: "column",
-		gap: { base: "6", md: "10" },
+		gap: { base: "6", md: "8" },
 	}),
 	breadcrumb: css({
 		fontSize: "sm",
@@ -190,53 +189,53 @@ const styles = {
 		transition: "color 0.2s ease",
 		_hover: { color: "blue.700", textDecoration: "underline" },
 	}),
-	stateCard: css({
-		backgroundColor: "white",
-		borderRadius: "xl",
-		boxShadow: "md",
-		borderWidth: "1px",
-		borderColor: "gray.200",
-		px: { base: "6", md: "8" },
-		py: { base: "6", md: "8" },
-	}),
 	message: css({
+		backgroundColor: "white",
+		borderRadius: "2xl",
+		border: "1px solid",
+		borderColor: "gray.200",
+		paddingInline: { base: "5", md: "6" },
+		paddingBlock: { base: "5", md: "6" },
 		color: "gray.600",
 		fontSize: { base: "md", md: "lg" },
+		boxShadow: "md",
 	}),
 	error: css({
+		backgroundColor: "white",
+		borderRadius: "2xl",
+		border: "1px solid",
+		borderColor: "red.200",
+		paddingInline: { base: "5", md: "6" },
+		paddingBlock: { base: "5", md: "6" },
 		color: "red.600",
 		fontSize: { base: "sm", md: "md" },
 		lineHeight: "1.6",
+		boxShadow: "md",
 	}),
 	article: css({
 		backgroundColor: "white",
-		borderRadius: "xl",
-		boxShadow: "lg",
-		borderWidth: "1px",
+		borderRadius: "2xl",
+		border: "1px solid",
 		borderColor: "gray.200",
-		overflow: "hidden",
-	}),
-	header: css({
-		padding: { base: "6", md: "8" },
+		boxShadow: "lg",
+		paddingInline: { base: "6", md: "8" },
+		paddingBlock: { base: "6", md: "8" },
 		display: "flex",
 		flexDirection: "column",
-		gap: "4",
-		background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
+		gap: { base: "5", md: "6" },
 	}),
-	kicker: css({
-		fontSize: "xs",
-		fontWeight: "semibold",
-		color: "blue.600",
-		textTransform: "uppercase",
-		letterSpacing: "wider",
+	articleHeader: css({
+		display: "flex",
+		flexDirection: "column",
+		gap: { base: "3", md: "4" },
 	}),
-	title: css({
-		fontSize: { base: "3xl", md: "4xl" },
+	articleTitle: css({
+		fontSize: { base: "2xl", md: "3xl" },
 		fontWeight: "bold",
 		color: "gray.900",
 		lineHeight: "tight",
 	}),
-	meta: css({
+	articleMeta: css({
 		display: "flex",
 		flexWrap: "wrap",
 		alignItems: "center",
@@ -248,6 +247,9 @@ const styles = {
 		display: "flex",
 		flexWrap: "wrap",
 		gap: "2",
+		listStyle: "none",
+		margin: 0,
+		padding: 0,
 	}),
 	tagItem: css({
 		backgroundColor: "gray.100",
@@ -259,7 +261,6 @@ const styles = {
 		color: "gray.600",
 	}),
 	content: css({
-		padding: { base: "6", md: "8" },
 		lineHeight: "tall",
 		color: "gray.800",
 		display: "flex",

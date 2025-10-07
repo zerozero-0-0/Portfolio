@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { FaRegStickyNote } from "react-icons/fa";
 import { Link } from "react-router";
 import { css } from "../../styled-system/css";
 import type { ArticleMeta } from "../types/Article";
+import { Header } from "../utils/Header";
 
 type FetchState =
 	| { status: "idle" | "loading" }
@@ -82,11 +84,16 @@ export default function Blog() {
 				<ul className={styles.list}>
 					{state.data.map((article) => (
 						<li key={article.slug} className={styles.listItem}>
-							<Link to={`/blog/${article.slug}`} className={styles.articleLink}>
-								<h2 className={styles.articleTitle}>{article.title}</h2>
-								<div className={styles.meta}>
-									<time dateTime={article.updatedAt}>
-										{formatDate(article.updatedAt)}
+							<Link to={`/blog/${article.slug}`} className={styles.card}>
+								<div className={styles.cardHeader}>
+									<h2 className={styles.cardTitle}>{article.title}</h2>
+									<span className={styles.cardDate}>
+										最終更新 {formatDate(article.updatedAt)}
+									</span>
+								</div>
+								<div className={styles.cardFooter}>
+									<time dateTime={article.createdAt}>
+										公開日 {formatDate(article.createdAt)}
 									</time>
 									{article.tags?.length ? (
 										<ul className={styles.tagList}>
@@ -107,103 +114,110 @@ export default function Blog() {
 	}
 
 	return (
-		<section className={styles.wrapper}>
+		<div className={styles.page}>
 			<div className={styles.container}>
-				<header className={styles.header}>
-					<p className={styles.kicker}>Blog</p>
-					<h1 className={styles.title}>最新記事</h1>
-					<p className={styles.description}>
-						学びのメモや開発ノートなどをMarkdownで整理して公開しています。
-					</p>
-				</header>
+				<Header
+					title="ブログ"
+					icon={{ type: "react-icon", icon: <FaRegStickyNote /> }}
+				/>
 				{content}
 			</div>
-		</section>
+		</div>
 	);
 }
 
 const styles = {
-	wrapper: css({
+	page: css({
 		minHeight: "100%",
-		backgroundColor: "gray.100",
-		py: { base: "10", md: "16" },
+		backgroundColor: "#f8fafc",
+		paddingBlock: { base: "12", md: "16" },
+		paddingInline: { base: "6", md: "12" },
 	}),
 	container: css({
 		maxW: "960px",
 		mx: "auto",
-		px: { base: "6", md: "10" },
-		display: "flex",
-		flexDirection: "column",
-		gap: { base: "8", md: "12" },
-	}),
-	header: css({
-		display: "flex",
-		flexDirection: "column",
-		gap: "4",
-	}),
-	kicker: css({
-		fontSize: "sm",
-		fontWeight: "semibold",
-		color: "blue.600",
-		textTransform: "uppercase",
-		letterSpacing: "wider",
-	}),
-	title: css({
-		fontSize: { base: "3xl", md: "4xl" },
-		fontWeight: "bold",
-		color: "gray.900",
-		lineHeight: "none",
-	}),
-	description: css({
-		fontSize: { base: "md", md: "lg" },
-		color: "gray.600",
-		maxW: "3xl",
-	}),
-	message: css({
-		color: "gray.600",
-		fontSize: { base: "md", md: "lg" },
-	}),
-	error: css({
-		color: "red.600",
-		fontSize: { base: "sm", md: "md" },
-		lineHeight: "1.6",
-	}),
-	list: css({
 		display: "flex",
 		flexDirection: "column",
 		gap: { base: "6", md: "8" },
 	}),
+	message: css({
+		backgroundColor: "white",
+		borderRadius: "2xl",
+		border: "1px solid",
+		borderColor: "gray.200",
+		paddingInline: { base: "5", md: "6" },
+		paddingBlock: { base: "5", md: "6" },
+		color: "gray.600",
+		fontSize: { base: "md", md: "lg" },
+		boxShadow: "md",
+	}),
+	error: css({
+		backgroundColor: "white",
+		borderRadius: "2xl",
+		border: "1px solid",
+		borderColor: "red.200",
+		paddingInline: { base: "5", md: "6" },
+		paddingBlock: { base: "5", md: "6" },
+		color: "red.600",
+		fontSize: { base: "sm", md: "md" },
+		lineHeight: "1.6",
+		boxShadow: "md",
+	}),
+	list: css({
+		listStyle: "none",
+		margin: 0,
+		padding: 0,
+		display: "flex",
+		flexDirection: "column",
+		gap: { base: "5", md: "6" },
+	}),
 	listItem: css({
 		listStyle: "none",
-		backgroundColor: "white",
-		borderRadius: "xl",
-		boxShadow: "md",
-		borderWidth: "1px",
+	}),
+	card: css({
+		display: "flex",
+		flexDirection: "column",
+		gap: { base: "3", md: "4" },
+		textDecoration: "none",
+		color: "gray.800",
+		paddingInline: { base: "5", md: "6" },
+		paddingBlock: { base: "5", md: "6" },
+		borderRadius: "2xl",
+		border: "1px solid",
 		borderColor: "gray.200",
-		transition: "all 0.2s ease-in-out",
+		backgroundColor: "white",
+		boxShadow: "md",
+		transition:
+			"transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
 		_hover: {
 			transform: "translateY(-4px)",
 			boxShadow: "xl",
+			borderColor: "gray.300",
+		},
+		_focusVisible: {
+			outline: "3px solid #6366f1",
+			outlineOffset: "4px",
 		},
 	}),
-	articleLink: css({
+	cardHeader: css({
 		display: "flex",
 		flexDirection: "column",
-		gap: "3",
-		padding: { base: "5", md: "6" },
-		color: "inherit",
-		textDecoration: "none",
+		gap: "2",
 	}),
-	articleTitle: css({
-		fontSize: { base: "xl", md: "2xl" },
+	cardTitle: css({
+		fontSize: { base: "lg", md: "xl" },
 		fontWeight: "semibold",
 		color: "gray.900",
 	}),
-	meta: css({
+	cardDate: css({
+		fontSize: "sm",
+		color: "gray.500",
+	}),
+	cardFooter: css({
 		display: "flex",
-		flexWrap: "wrap",
-		alignItems: "center",
-		gap: "2",
+		flexDirection: { base: "column", md: "row" },
+		gap: { base: "2", md: "4" },
+		alignItems: { base: "flex-start", md: "center" },
 		color: "gray.500",
 		fontSize: "sm",
 	}),
@@ -211,7 +225,9 @@ const styles = {
 		display: "flex",
 		flexWrap: "wrap",
 		gap: "2",
-		marginInlineStart: "4",
+		margin: 0,
+		padding: 0,
+		listStyle: "none",
 	}),
 	tagItem: css({
 		backgroundColor: "gray.100",
