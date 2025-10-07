@@ -36,11 +36,11 @@ export function listArticles(): ArticleMeta[] {
 		.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
 }
 
-export function getPostBySlug(slug: string): Article | null {
+export function getPostByIdentifier(identifier: string): Article | null {
 	for (const [path, raw] of Object.entries(files)) {
 		const { data, content } = matter(raw);
 		const meta = buildMeta(path, data);
-		if (meta.slug === slug) {
+		if (meta.identifier === identifier || meta.slug === identifier) {
 			return {
 				meta,
 				content: md.render(content),
@@ -57,10 +57,12 @@ function buildMeta(path: string, rawData: RawFrontmatter): ArticleMeta {
 
 	const title = ensureString(data.title, getFallbackTitle(path));
 	const slug = ensureSlug(data.slug ?? getFilename(path), path);
+	const identifier = ensureIdentifier(data.identifier, slug);
 	const tags = normalizeTags(data.tags);
 
 	return {
 		title,
+		identifier,
 		slug,
 		tags,
 		createdAt: normalizeDate(data.createdat ?? data.createddate),
@@ -87,6 +89,14 @@ function ensureSlug(value: unknown, path: string): string {
 		return candidate;
 	}
 	return slugify(path.replace(/\.md$/i, "")) || `post-${Date.now()}`;
+}
+
+function ensureIdentifier(value: unknown, fallback: string): string {
+	const candidate = ensureString(value, "").trim();
+	if (candidate) {
+		return candidate;
+	}
+	return fallback;
 }
 
 function slugify(value: string): string {

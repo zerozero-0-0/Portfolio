@@ -1,6 +1,7 @@
 ---
 title: サンプル記事
 slug: sample
+identifier: sample
 createdAt: 2024-06-01
 updatedAt: 2024-06-10
 tags: [sample, example]

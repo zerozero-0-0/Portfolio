@@ -136,13 +136,13 @@ export default function Blog() {
 				>
 					{state.data.map((article) => (
 						<li
-							key={article.slug}
+							key={article.identifier}
 							className={css({
 								listStyle: "none",
 							})}
 						>
 							<Link
-								to={`/blog/${article.slug}`}
+								to={`/blog/${article.identifier}`}
 								className={css({
 									display: "flex",
 									flexDirection: "column",

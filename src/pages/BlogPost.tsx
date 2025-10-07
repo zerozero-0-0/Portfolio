@@ -12,7 +12,7 @@ type ArticleState =
 	| { status: "error"; message: string };
 
 export default function BlogPost() {
-	const { slug } = useParams<{ slug: string }>();
+	const { identifier } = useParams<{ identifier: string }>();
 	const [state, setState] = useState<ArticleState>({ status: "idle" });
 
 	const dateFormatter = useMemo(
@@ -24,7 +24,7 @@ export default function BlogPost() {
 	);
 
 	useEffect(() => {
-		if (!slug) {
+		if (!identifier) {
 			setState({
 				status: "error",
 				message: "記事の識別子が指定されていません。",
@@ -39,7 +39,7 @@ export default function BlogPost() {
 		let active = true;
 		setState({ status: "loading" });
 
-		fetch(`/api/article/${slug}`)
+		fetch(`/api/article/${identifier}`)
 			.then(async (res) => {
 				if (res.status === 404) {
 					const payload = await res.json().catch(() => null);
@@ -68,7 +68,7 @@ export default function BlogPost() {
 		return () => {
 			active = false;
 		};
-	}, [slug]);
+	}, [identifier]);
 
 	const content = renderContent(state, {
 		formatDate: (iso) => {

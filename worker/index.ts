@@ -1,6 +1,6 @@
 import { type Context, Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
-import { getPostBySlug, listArticles } from "./lib/parser";
+import { getPostByIdentifier, listArticles } from "./lib/parser";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
 import { handleCachedRequest } from "./utils/cache";
@@ -84,9 +84,9 @@ app.get("/api/article", (c) =>
 	}),
 );
 
-app.get("/api/article/:slug", (c) => {
-	const slug = c.req.param("slug");
-	const result = getPostBySlug(slug);
+app.get("/api/article/:identifier", (c) => {
+	const identifier = c.req.param("identifier");
+	const result = getPostByIdentifier(identifier);
 	if (!result) {
 		return buildJsonResponse(
 			c,

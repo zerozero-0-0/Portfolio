@@ -4,6 +4,7 @@ export type ArticleMeta = {
 	updatedAt: string; // ISO 8601 format
 
 	tags?: string[];
+	identifier: string;
 	slug: string;
 };
 
