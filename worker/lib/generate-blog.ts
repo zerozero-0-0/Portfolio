@@ -1,6 +1,7 @@
 // scripts/generate-articles.ts
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import DOMPurify from "isomorphic-dompurify";
 import fg from "fast-glob";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
@@ -67,9 +68,44 @@ async function generate() {
 				tags: Array.isArray(data.tags) ? data.tags.map(String) : undefined,
 			};
 
+			const renderedContent = md.render(content);
+			const sanitizedContent = DOMPurify.sanitize(renderedContent, {
+				ALLOWED_TAGS: [
+					"h1",
+					"h2",
+					"h3",
+					"h4",
+					"h5",
+					"h6",
+					"p",
+					"a",
+					"ul",
+					"ol",
+					"li",
+					"blockquote",
+					"code",
+					"pre",
+					"strong",
+					"em",
+					"del",
+					"img",
+					"table",
+					"thead",
+					"tbody",
+					"tr",
+					"th",
+					"td",
+					"br",
+					"hr",
+				],
+				ALLOWED_ATTR: ["href", "src", "alt", "title", "class"],
+				ALLOWED_URI_REGEXP:
+					/^(?:(?:https?|mailto|ftp):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
+			});
+
 			return toSerializableArticle({
 				meta,
-				content: md.render(content),
+				content: sanitizedContent,
 			});
 		}),
 	);
