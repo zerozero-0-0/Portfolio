@@ -144,54 +144,67 @@ export default function AtCoder() {
 					</h2>
 				</div>
 			</header>
-			{isLoading ? (
-				<p
-					className={css({
-						fontSize: "sm",
-						color: "gray.500",
-					})}
-				>
-					現在レートを取得しています...
-				</p>
-			) : hasError ? (
-				<p
-					className={css({
-						fontSize: "sm",
-						color: "red.500",
-					})}
-				>
-					レートを取得できませんでした。時間をおいて再度お試しください。
-				</p>
-			) : (
-				<div
-					className={css({
-						display: "flex",
-						flexDirection: { base: "column", sm: "row" },
-						alignItems: { sm: "center" },
-						justifyContent: "space-between",
-						gap: { base: "5", sm: "6" },
-					})}
-				>
-					<span
+			<div
+				className={css({
+					display: "flex",
+					fontSize: "xl",
+                    alignItems: "center",
+				})}
+			>
+				<span
+                    className={css({
+                        mr: 6,
+                    })}
+                >Algorithm Rate :</span>
+				{isLoading ? (
+					<p
 						className={css({
-							fontSize: { base: "3xl", md: "4xl" },
-							fontWeight: "bold",
-							color: "gray.900",
+							fontSize: "sm",
+							color: "gray.500",
 						})}
 					>
-						<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
-					</span>
+						現在レートを取得しています...
+					</p>
+				) : hasError ? (
+					<p
+						className={css({
+							fontSize: "sm",
+							color: "red.500",
+						})}
+					>
+						レートを取得できませんでした。時間をおいて再度お試しください。
+					</p>
+				) : (
 					<div
 						className={css({
 							display: "flex",
-							flexDirection: "column",
-							gap: "2",
-							color: "gray.600",
-							fontSize: "sm",
+							flexDirection: { base: "column", sm: "row" },
+							alignItems: { sm: "center" },
+							justifyContent: "space-between",
+							gap: { base: "5", sm: "6" },
 						})}
-					></div>
-				</div>
-			)}
+					>
+						<span
+							className={css({
+								fontSize: { base: "3xl", md: "4xl" },
+								fontWeight: "bold",
+								color: "gray.900",
+							})}
+						>
+							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
+						</span>
+						<div
+							className={css({
+								display: "flex",
+								flexDirection: "column",
+								gap: "2",
+								color: "gray.600",
+								fontSize: "sm",
+							})}
+						></div>
+					</div>
+				)}
+			</div>
 		</section>
 	);
 }
