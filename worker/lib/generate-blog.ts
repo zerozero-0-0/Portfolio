@@ -95,9 +95,9 @@ async function generate() {
 		await mkdir(path.dirname(OUTPUT_PATH), { recursive: true });
 		await writeFile(OUTPUT_PATH, code, "utf8");
 		console.log(`Manifest generated at ${OUTPUT_PATH}`);
-		} finally {
-			jsdom.window.close();
-		}
+	} finally {
+		jsdom.window.close();
+	}
 }
 
 function normalizeDate(value: unknown): string {
