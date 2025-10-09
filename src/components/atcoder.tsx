@@ -156,7 +156,7 @@ export default function AtCoder() {
 						mr: 6,
 					})}
 				>
-					Algorithm Rate :
+					Algorithm Rate:
 				</span>
 				{isLoading ? (
 					<p

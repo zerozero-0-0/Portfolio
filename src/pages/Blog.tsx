@@ -208,7 +208,7 @@ export default function Blog() {
 											gap: "2",
 										})}
 									>
-										<h3>Tags:</h3>
+										<span>Tags:</span>
 										{article.tags?.length ? (
 											<ul
 												className={css({
