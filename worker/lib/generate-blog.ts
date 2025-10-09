@@ -4,6 +4,8 @@ import path from "node:path";
 import fg from "fast-glob";
 import matter from "gray-matter";
 import MarkdownIt from "markdown-it";
+import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify";
 
 const ROOT_DIR = process.cwd();
 const ARTICLES_DIR = path.join(ROOT_DIR, "content", "blog");
@@ -15,8 +17,14 @@ const OUTPUT_PATH = path.join(
 );
 
 const md = new MarkdownIt({
-	html: false,
+	html: true,
 	linkify: true,
+});
+
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+process.on("exit", () => {
+	window.close();
 });
 
 /**
@@ -67,9 +75,12 @@ async function generate() {
 				tags: Array.isArray(data.tags) ? data.tags.map(String) : undefined,
 			};
 
+			const rendered = md.render(content);
+			const sanitizedContent = DOMPurify.sanitize(rendered);
+
 			return toSerializableArticle({
 				meta,
-				content: md.render(content),
+				content: sanitizedContent,
 			});
 		}),
 	);
