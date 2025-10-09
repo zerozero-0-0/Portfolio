@@ -21,8 +21,10 @@ const md = new MarkdownIt({
 	linkify: true,
 });
 
+const jsdom = new JSDOM("");
+const DOMPurify = createDOMPurify(jsdom.window);
 process.on("exit", () => {
-	window.close();
+	jsdom.window.close();
 });
 
 /**
@@ -45,9 +47,6 @@ const slugify = (value: string) =>
 		.toLowerCase();
 
 async function generate() {
-	const window = new JSDOM("").window;
-	const DOMPurify = createDOMPurify(window);
-
 	const files = await fg("**/*.md", {
 		cwd: ARTICLES_DIR,
 		absolute: true,
