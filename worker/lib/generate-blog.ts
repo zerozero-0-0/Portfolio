@@ -1,11 +1,11 @@
 // scripts/generate-articles.ts
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import createDOMPurify from "dompurify";
 import fg from "fast-glob";
 import matter from "gray-matter";
-import MarkdownIt from "markdown-it";
 import { JSDOM } from "jsdom";
-import createDOMPurify from "dompurify";
+import MarkdownIt from "markdown-it";
 
 const ROOT_DIR = process.cwd();
 const ARTICLES_DIR = path.join(ROOT_DIR, "content", "blog");
