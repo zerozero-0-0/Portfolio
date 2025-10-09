@@ -188,12 +188,12 @@ export default function Blog() {
 									})}
 								>
 									<div
-                                        className={css({
-                                            display: "flex",
-                                            flexWrap: "wrap",
-                                            gap: "3",
-                                        })}
-                                    >
+										className={css({
+											display: "flex",
+											flexWrap: "wrap",
+											gap: "3",
+										})}
+									>
 										<time dateTime={article.createdAt}>
 											公開日 {formatDate(article.createdAt)}
 										</time>
@@ -202,12 +202,12 @@ export default function Blog() {
 										</time>
 									</div>
 									<div
-                                        className={css({
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "2",
-                                        })}
-                                    >
+										className={css({
+											display: "flex",
+											alignItems: "center",
+											gap: "2",
+										})}
+									>
 										<h3>Tags:</h3>
 										{article.tags?.length ? (
 											<ul
