@@ -335,7 +335,7 @@ function renderContent(
 								marginBlock: "1",
 							},
 						})}
-						// biome-ignore lint/security/noDangerouslySetInnerHtml: Markdown-itでHTMLタグを抑制した安全なコンテンツを表示するため
+						// biome-ignore lint/security/noDangerouslySetInnerHtml: サーバー側でDOMPurifyによりサニタイズ済みのMarkdownコンテンツを描画するため
 						dangerouslySetInnerHTML={{ __html: content }}
 					/>
 				</article>
