@@ -191,40 +191,46 @@ export default function Blog() {
 									<time dateTime={article.createdAt}>
 										公開日 {formatDate(article.createdAt)}
 									</time>
-									<span aria-hidden="true">・</span>
 									<time dateTime={article.updatedAt}>
-										最終更新 {formatDate(article.updatedAt)}
+										最終更新日 {formatDate(article.updatedAt)}
 									</time>
+									<span className={css({ 
+                                        fontWeight: "medium",
+                                        ml: "16",
+                                        mr: "4"
+                                    })}>
+                                        Tags: 
+                                    </span>
+									{article.tags?.length ? (
+										<ul
+											className={css({
+												display: "flex",
+												flexWrap: "wrap",
+												gap: "2",
+												margin: 0,
+												padding: 0,
+												listStyle: "none",
+											})}
+										>
+											{article.tags.map((tag) => (
+												<li
+													key={tag}
+													className={css({
+														backgroundColor: "gray.100",
+														borderRadius: "full",
+														px: "3",
+														py: "1",
+														fontSize: "xs",
+														fontWeight: "medium",
+														color: "gray.600",
+													})}
+												>
+													#{tag}
+												</li>
+											))}
+										</ul>
+									) : null}
 								</div>
-								{article.tags?.length ? (
-									<ul
-										className={css({
-											display: "flex",
-											flexWrap: "wrap",
-											gap: "2",
-											margin: 0,
-											padding: 0,
-											listStyle: "none",
-										})}
-									>
-										{article.tags.map((tag) => (
-											<li
-												key={tag}
-												className={css({
-													backgroundColor: "gray.100",
-													borderRadius: "full",
-													px: "3",
-													py: "1",
-													fontSize: "xs",
-													fontWeight: "medium",
-													color: "gray.600",
-												})}
-											>
-												#{tag}
-											</li>
-										))}
-									</ul>
-								) : null}
 							</Link>
 						</li>
 					))}
