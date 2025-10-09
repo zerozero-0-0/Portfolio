@@ -148,14 +148,16 @@ export default function AtCoder() {
 				className={css({
 					display: "flex",
 					fontSize: "xl",
-                    alignItems: "center",
+					alignItems: "center",
 				})}
 			>
 				<span
-                    className={css({
-                        mr: 6,
-                    })}
-                >Algorithm Rate :</span>
+					className={css({
+						mr: 6,
+					})}
+				>
+					Algorithm Rate :
+				</span>
 				{isLoading ? (
 					<p
 						className={css({

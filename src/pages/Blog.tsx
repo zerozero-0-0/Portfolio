@@ -194,13 +194,15 @@ export default function Blog() {
 									<time dateTime={article.updatedAt}>
 										最終更新日 {formatDate(article.updatedAt)}
 									</time>
-									<span className={css({ 
-                                        fontWeight: "medium",
-                                        ml: "16",
-                                        mr: "4"
-                                    })}>
-                                        Tags: 
-                                    </span>
+									<span
+										className={css({
+											fontWeight: "medium",
+											ml: "16",
+											mr: "4",
+										})}
+									>
+										Tags:
+									</span>
 									{article.tags?.length ? (
 										<ul
 											className={css({
