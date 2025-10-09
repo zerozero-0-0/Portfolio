@@ -195,15 +195,6 @@ export default function AtCoder() {
 						>
 							<span className={rateText({ tone })}>{algoRate ?? "-"}</span>
 						</span>
-						<div
-							className={css({
-								display: "flex",
-								flexDirection: "column",
-								gap: "2",
-								color: "gray.600",
-								fontSize: "sm",
-							})}
-						></div>
 					</div>
 				)}
 			</div>
