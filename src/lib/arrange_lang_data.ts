@@ -6,7 +6,7 @@ export default function arrangeLangData(
 ): languageUsage[] {
 	const { knownLanguages, othersPercentage } = data.reduce(
 		(acc, item) => {
-			if (item.language in languageToIconMap) {
+			if (item.language in languageToIconMap && item.percentage > 0.0) {
 				acc.knownLanguages.push(item);
 			} else {
 				acc.othersPercentage += item.percentage;
