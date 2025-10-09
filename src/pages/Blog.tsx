@@ -181,50 +181,65 @@ export default function Blog() {
 								<div
 									className={css({
 										display: "flex",
-										flexWrap: "wrap",
 										alignItems: "center",
-										gap: "3",
+										gap: "8",
 										color: "gray.500",
 										fontSize: "sm",
 									})}
 								>
-									<time dateTime={article.createdAt}>
-										公開日 {formatDate(article.createdAt)}
-									</time>
-									<span aria-hidden="true">・</span>
-									<time dateTime={article.updatedAt}>
-										最終更新 {formatDate(article.updatedAt)}
-									</time>
-								</div>
-								{article.tags?.length ? (
-									<ul
+									<div
 										className={css({
 											display: "flex",
 											flexWrap: "wrap",
-											gap: "2",
-											margin: 0,
-											padding: 0,
-											listStyle: "none",
+											gap: "3",
 										})}
 									>
-										{article.tags.map((tag) => (
-											<li
-												key={tag}
+										<time dateTime={article.createdAt}>
+											公開日 {formatDate(article.createdAt)}
+										</time>
+										<time dateTime={article.updatedAt}>
+											最終更新日 {formatDate(article.updatedAt)}
+										</time>
+									</div>
+									<div
+										className={css({
+											display: "flex",
+											alignItems: "center",
+											gap: "2",
+										})}
+									>
+										<span>Tags:</span>
+										{article.tags?.length ? (
+											<ul
 												className={css({
-													backgroundColor: "gray.100",
-													borderRadius: "full",
-													px: "3",
-													py: "1",
-													fontSize: "xs",
-													fontWeight: "medium",
-													color: "gray.600",
+													display: "flex",
+													flexWrap: "wrap",
+													gap: "2",
+													m: 0,
+													p: 0,
+													listStyle: "none",
 												})}
 											>
-												#{tag}
-											</li>
-										))}
-									</ul>
-								) : null}
+												{article.tags.map((tag) => (
+													<li
+														key={tag}
+														className={css({
+															backgroundColor: "gray.100",
+															borderRadius: "full",
+															px: "3",
+															py: "1",
+															fontSize: "xs",
+															fontWeight: "medium",
+															color: "gray.600",
+														})}
+													>
+														#{tag}
+													</li>
+												))}
+											</ul>
+										) : null}
+									</div>
+								</div>
 							</Link>
 						</li>
 					))}
