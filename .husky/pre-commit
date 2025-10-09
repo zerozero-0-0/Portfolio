@@ -1,1 +1,1 @@
-pnpm prepare && pnpm check && pnpm build
+pnpm exec panda codegen && pnpm check && pnpm build
