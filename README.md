@@ -2,6 +2,8 @@
 
 私のポートフォリオです。順次更新予定です。
 
+リンク : https://portfolio.zrzr.workers.dev/
+
 Cloudflare Workersにデプロイしています。
 
 ## 技術スタック
