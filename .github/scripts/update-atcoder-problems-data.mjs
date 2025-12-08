@@ -14,7 +14,7 @@ const unixSec = Math.floor(yesterday.getTime() / 1000);
 
 // 昨日0:00からの提出を取得するためのURL
 const url = `https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=${username}&from_second=${unixSec}`;
-const KVkey = `atcoder-problems-data:${username}`;
+const kvkey = `atcoder-problems-data:${username}`;
 
 async function main() {
     const historyRes = await fetch(url, {
