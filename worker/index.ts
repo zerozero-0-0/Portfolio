@@ -47,8 +47,8 @@ const fetchWithDefaultInit = async (url: string, init: RequestInit = {}) =>
 const buildGitHubHeaders = (token?: string): Headers => {
 	const headers = new Headers({
 		"User-Agent": "zerozero-0-0/portfolio",
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
+		Accept: "application/vnd.github+json",
+		"X-GitHub-Api-Version": "2022-11-28",
 	});
 
 	if (token) {
