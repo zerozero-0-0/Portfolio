@@ -3,12 +3,13 @@ const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 const namespaceId = process.env.CLOUDFLARE_KV_NAMESPACE_ID;
 const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 
-if (!username) {
-    throw new Error ('Environment variable ATCODER_USERNAME is not set properly.');
+if (!(username && accountId && namespaceId && apiToken)) {
+    throw new Error('Environment variables are not set properly.');
 }
 
 const yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
+yesterday.setHours(0, 0, 0, 0);
 const unixSec = Math.floor(yesterday.getTime() / 1000);
 
 // 昨日0:00からの提出を取得するためのURL
@@ -32,15 +33,11 @@ async function main() {
     }
 
     const history = await historyRes.json();
-    if (!Array.isArray(history) || history.length === 0) {
-        throw new Error('AtCoder submissions history is empty or invalid.');
+    if (!Array.isArray(history)) {
+        throw new Error('AtCoder submissions history is invalid.');
     }
 
-    let cnt = 0;
-
-    for (const submission of history) {
-        if (submission.result === "AC")  cnt++;
-    }
+    const cnt = history.filter(submission => submission.result === "AC").length;
 
     const payload = {
         cnt: cnt,
