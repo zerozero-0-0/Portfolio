@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FaBook, FaHome, FaMapMarkerAlt, FaRegStickyNote } from "react-icons/fa";
+import { FaHome, FaMapMarkerAlt, FaRegStickyNote } from "react-icons/fa";
 import { SiZenn } from "react-icons/si";
 import { SlMenu } from "react-icons/sl";
 import { NavLink, type NavLinkRenderProps } from "react-router";
