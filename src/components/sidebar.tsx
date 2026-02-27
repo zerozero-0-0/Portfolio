@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { FaHome, FaMapMarkerAlt, FaRegStickyNote } from "react-icons/fa";
+import { FaBook, FaHome, FaMapMarkerAlt, FaRegStickyNote } from "react-icons/fa";
+import { SiZenn } from "react-icons/si";
 import { SlMenu } from "react-icons/sl";
 import { NavLink, type NavLinkRenderProps } from "react-router";
 import { css } from "../../styled-system/css";
@@ -9,6 +10,7 @@ type NavItem = {
 	to: string;
 	icon: ReactNode;
 	end?: boolean;
+	external?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -27,6 +29,12 @@ const navItems: NavItem[] = [
 		label: "ブログ",
 		to: "/blog",
 		icon: <FaRegStickyNote />,
+	},
+	{
+		label: "開発録",
+		to: "https://zenn.dev/zerozero_00",
+		icon: <SiZenn />,
+		external: true,
 	},
 ];
 
@@ -101,11 +109,12 @@ export function Sidebar() {
 								width: { base: "calc(50% - 0.5rem)", lg: "full" },
 							})}
 						>
-							<NavLink
-								to={item.to}
-								end={item.end}
-								className={({ isActive, isPending }: NavLinkRenderProps) =>
-									css({
+							{item.external ? (
+								<a
+									href={item.to}
+									target="_blank"
+									rel="noopener noreferrer"
+									className={css({
 										display: "inline-flex",
 										alignItems: "center",
 										gap: "3",
@@ -114,44 +123,87 @@ export function Sidebar() {
 										px: { base: "4", lg: "5" },
 										py: { base: "3", lg: "3.5" },
 										fontWeight: "medium",
-										color: isActive ? "white" : "gray.600",
-										backgroundColor: isActive
-											? "gray.900"
-											: isPending
-												? "gray.100"
-												: "transparent",
-										boxShadow: isActive ? "md" : "none",
+										color: "gray.600",
+										backgroundColor: "transparent",
 										transition: "background-color 0.2s ease, color 0.2s ease",
 										_hover: {
-											backgroundColor: isActive ? "gray.900" : "gray.100",
-											color: isActive ? "white" : "gray.700",
+											backgroundColor: "gray.100",
+											color: "gray.700",
 										},
 										_focusVisible: {
 											outline: "3px solid #6366f1",
 											outlineOffset: "3px",
 										},
-									})
-								}
-							>
-								{({ isActive }: NavLinkRenderProps) => (
-									<>
-										<span
-											className={css({
-												display: "inline-flex",
-												alignItems: "center",
-												justifyContent: "center",
-												boxSize: "8",
-												borderRadius: "full",
-												backgroundColor: isActive ? "gray.700" : "gray.200",
-												color: isActive ? "white" : "gray.600",
-											})}
-										>
-											{item.icon}
-										</span>
-										<span>{item.label}</span>
-									</>
-								)}
-							</NavLink>
+									})}
+								>
+									<span
+										className={css({
+											display: "inline-flex",
+											alignItems: "center",
+											justifyContent: "center",
+											boxSize: "8",
+											borderRadius: "full",
+											backgroundColor: "gray.200",
+											color: "gray.600",
+										})}
+									>
+										{item.icon}
+									</span>
+									<span>{item.label}</span>
+								</a>
+							) : (
+								<NavLink
+									to={item.to}
+									end={item.end}
+									className={({ isActive, isPending }: NavLinkRenderProps) =>
+										css({
+											display: "inline-flex",
+											alignItems: "center",
+											gap: "3",
+											width: "full",
+											borderRadius: "lg",
+											px: { base: "4", lg: "5" },
+											py: { base: "3", lg: "3.5" },
+											fontWeight: "medium",
+											color: isActive ? "white" : "gray.600",
+											backgroundColor: isActive
+												? "gray.900"
+												: isPending
+													? "gray.100"
+													: "transparent",
+											boxShadow: isActive ? "md" : "none",
+											transition: "background-color 0.2s ease, color 0.2s ease",
+											_hover: {
+												backgroundColor: isActive ? "gray.900" : "gray.100",
+												color: isActive ? "white" : "gray.700",
+											},
+											_focusVisible: {
+												outline: "3px solid #6366f1",
+												outlineOffset: "3px",
+											},
+										})
+									}
+								>
+									{({ isActive }: NavLinkRenderProps) => (
+										<>
+											<span
+												className={css({
+													display: "inline-flex",
+													alignItems: "center",
+													justifyContent: "center",
+													boxSize: "8",
+													borderRadius: "full",
+													backgroundColor: isActive ? "gray.700" : "gray.200",
+													color: isActive ? "white" : "gray.600",
+												})}
+											>
+												{item.icon}
+											</span>
+											<span>{item.label}</span>
+										</>
+									)}
+								</NavLink>
+							)}
 						</li>
 					))}
 				</ul>
