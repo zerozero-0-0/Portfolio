@@ -10,6 +10,7 @@
 		"start": "pnpm exec wrangler dev --remote",
 		"dev:servers": "bash -lc 'pnpm run dev:frontend & pnpm run start & wait'",
 		"prestart": "pnpm run generate:articles",
+		"sync:atcoder": "node scripts/sync-atcoder-rate.mjs",
 		"generate:articles": "pnpm exec tsx worker/lib/generate-blog.ts",
 		"prebuild": "pnpm run generate:articles",
 		"build": "tsc -b && vite build",
