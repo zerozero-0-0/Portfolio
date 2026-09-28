@@ -7,6 +7,7 @@ declare namespace Cloudflare {
 		LANG_STATS_ID: string;
 		LANG_STATS_PREVIEW_ID: string;
 		LANG_STATS: KVNamespace;
+		ASSETS: Fetcher;
 		GITHUB_USERNAME: string;
 		ATCODER_USERNAME: string;
 		ALLOWED_ORIGINS: string;

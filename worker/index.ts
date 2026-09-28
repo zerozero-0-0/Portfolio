@@ -76,7 +76,19 @@ app.get("/api/atcoder", async (c) => {
 	return buildJsonResponse(c, { latestRating: data.rating });
 });
 
-app.notFound(() => new Response(null, { status: 404 }));
+// SPA フォールバックはブラウザの遷移 (Sec-Fetch-Mode: navigate) にしか効かず、
+// X や Discord などのクローラーは /blog/... で worker の 404 を受け取り OGP を読めない。
+// API 以外の GET/HEAD には index.html を返してメタタグを取得できるようにする
+app.notFound((c) => {
+	const { method } = c.req;
+	if (
+		(method === "GET" || method === "HEAD") &&
+		!c.req.path.startsWith("/api/")
+	) {
+		return c.env.ASSETS.fetch(new Request(new URL("/", c.req.url), c.req.raw));
+	}
+	return new Response(null, { status: 404 });
+});
 
 app.get("/api/article", (c) =>
 	buildJsonResponse(c, {
