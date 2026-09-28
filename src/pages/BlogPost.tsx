@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { FaRegStickyNote } from "react-icons/fa";
 import { Link, useParams } from "react-router";
 import { css } from "../../styled-system/css";
+import { findArticle } from "../lib/article";
+import { useArticleHotUpdate } from "../lib/article_hot_update";
 import type { Article } from "../types/Article";
 import { Header } from "../utils/Header";
 
@@ -22,6 +24,19 @@ export default function BlogPost() {
 			}),
 		[],
 	);
+
+	useArticleHotUpdate((articles) => {
+		if (!identifier) return;
+		const article = findArticle(articles, identifier);
+		setState(
+			article
+				? { status: "success", data: article }
+				: {
+						status: "error",
+						message: "指定された記事は見つかりませんでした。",
+					},
+		);
+	});
 
 	useEffect(() => {
 		if (!identifier) {
