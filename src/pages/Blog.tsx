@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { FaRegStickyNote } from "react-icons/fa";
 import { Link } from "react-router";
 import { css } from "../../styled-system/css";
+import { sortArticleMetas } from "../lib/article";
+import { useArticleHotUpdate } from "../lib/article_hot_update";
 import type { ArticleMeta } from "../types/Article";
 import { Header } from "../utils/Header";
 
@@ -21,6 +23,10 @@ export default function Blog() {
 			}),
 		[],
 	);
+
+	useArticleHotUpdate((articles) => {
+		setState({ status: "success", data: sortArticleMetas(articles) });
+	});
 
 	useEffect(() => {
 		let active = true;

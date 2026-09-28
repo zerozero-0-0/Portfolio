@@ -1,4 +1,5 @@
 import articles from "../../content/generated/article-manifest";
+import { sortArticleMetas } from "../../src/lib/article";
 import type { Article, ArticleMeta } from "../../src/types/Article";
 
 const articleByIdentifier = new Map<string, Article>();
@@ -10,9 +11,7 @@ for (const article of articles) {
 }
 
 export function listArticles(): ArticleMeta[] {
-	return [...articleByIdentifier.values()]
-		.map((article) => article.meta)
-		.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
+	return sortArticleMetas([...articleByIdentifier.values()]);
 }
 
 export function getPostByIdentifier(identifier: string): Article | null {
