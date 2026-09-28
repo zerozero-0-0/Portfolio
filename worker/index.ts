@@ -1,5 +1,6 @@
 import { type Context, Hono } from "hono";
 import type { languageUsage } from "../src/types/language";
+import { buildArticleMeta, rewritePageMeta } from "./lib/ogp";
 import { getPostByIdentifier, listArticles } from "./lib/parser";
 import { createAtCoderLatestRateFetcher } from "./services/atcoder";
 import { createGitHubLanguageSummaryFetcher } from "./services/github";
@@ -78,17 +79,39 @@ app.get("/api/atcoder", async (c) => {
 
 // SPA フォールバックはブラウザの遷移 (Sec-Fetch-Mode: navigate) にしか効かず、
 // X や Discord などのクローラーは /blog/... で worker の 404 を受け取り OGP を読めない。
-// API 以外の GET/HEAD には index.html を返してメタタグを取得できるようにする
-app.notFound((c) => {
+// API 以外の GET/HEAD には index.html を返してメタタグを取得できるようにする。
+// 記事ページでは記事ごとのタイトル・説明文に書き換える
+app.notFound(async (c) => {
 	const { method } = c.req;
 	if (
-		(method === "GET" || method === "HEAD") &&
-		!c.req.path.startsWith("/api/")
+		(method !== "GET" && method !== "HEAD") ||
+		c.req.path.startsWith("/api/")
 	) {
-		return c.env.ASSETS.fetch(new Request(new URL("/", c.req.url), c.req.raw));
+		return new Response(null, { status: 404 });
 	}
-	return new Response(null, { status: 404 });
+
+	const url = new URL(c.req.url);
+	const response = await c.env.ASSETS.fetch(
+		new Request(new URL("/", url), c.req.raw),
+	);
+
+	const article = findArticleByPath(url.pathname);
+	return article
+		? rewritePageMeta(response, buildArticleMeta(article, url))
+		: response;
 });
+
+function findArticleByPath(pathname: string) {
+	const match = pathname.match(/^\/blog\/([^/]+)\/?$/);
+	if (!match) {
+		return null;
+	}
+	try {
+		return getPostByIdentifier(decodeURIComponent(match[1]));
+	} catch {
+		return null;
+	}
+}
 
 app.get("/api/article", (c) =>
 	buildJsonResponse(c, {
