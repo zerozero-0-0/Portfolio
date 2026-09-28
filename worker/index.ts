@@ -91,14 +91,19 @@ app.notFound(async (c) => {
 	}
 
 	const url = new URL(c.req.url);
-	const response = await c.env.ASSETS.fetch(
-		new Request(new URL("/", url), c.req.raw),
-	);
+	const shellRequest = new Request(new URL("/", url), c.req.raw);
 
 	const article = findArticleByPath(url.pathname);
-	return article
-		? rewritePageMeta(response, buildArticleMeta(article, url))
-		: response;
+	if (!article) {
+		return c.env.ASSETS.fetch(shellRequest);
+	}
+
+	// 条件付きリクエストのままだと index.html の 304 (本文なし) が返り書き換えられない。
+	// 記事だけ更新しても index.html の ETag は変わらないため、検証ヘッダーを外して常に本文を取得する
+	shellRequest.headers.delete("If-None-Match");
+	shellRequest.headers.delete("If-Modified-Since");
+	const response = await c.env.ASSETS.fetch(shellRequest);
+	return rewritePageMeta(response, buildArticleMeta(article, url));
 });
 
 function findArticleByPath(pathname: string) {

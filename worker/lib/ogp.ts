@@ -32,6 +32,15 @@ export function rewritePageMeta(response: Response, meta: PageMeta): Response {
 		},
 	});
 
+	// 書き換え後の HTML は index.html と中身が違うため、index.html の検証子を引き継がない
+	const headers = new Headers(response.headers);
+	headers.delete("ETag");
+	headers.delete("Last-Modified");
+	const shell = new Response(response.body, {
+		status: response.status,
+		headers,
+	});
+
 	return new HTMLRewriter()
 		.on("title", {
 			element(element) {
@@ -48,7 +57,7 @@ export function rewritePageMeta(response: Response, meta: PageMeta): Response {
 				element.setAttribute("href", meta.url);
 			},
 		})
-		.transform(response);
+		.transform(shell);
 }
 
 /** 記事本文の HTML からタグを取り除き、先頭を説明文として切り出す */
