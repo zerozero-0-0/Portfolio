@@ -10,8 +10,9 @@
 	"assets": {
         "directory": "./dist",
 		"binding": "ASSETS",
-		// 記事ページはブラウザ遷移でも worker を通し、記事ごとの OGP を返す
-		"run_worker_first": ["/blog/*"],
+		// 記事ページはブラウザ遷移でも worker を通し、記事ごとの OGP を返す。
+		// 配列指定すると一致しないパスは SPA フォールバックで index.html が返るため、API も必ず含める
+		"run_worker_first": ["/api/*", "/blog/*"],
 		"not_found_handling": "single-page-application"
 	},
 	"observability": {
