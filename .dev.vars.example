@@ -1,0 +1,14 @@
+# dev サーバー (pnpm dev) 用の環境変数。
+# このファイルを .dev.vars にコピーして値を埋める (.dev.vars は git 管理外)
+#   cp .dev.vars.example .dev.vars
+
+# /api/languages: GitHub のユーザー名
+GITHUB_USERNAME=zerozero-0-0
+# GitHub API のトークン (任意)。未設定だと未認証扱いで 60 req/h の制限に掛かりやすい
+LANG_USAGE_TOKEN=
+
+# /api/atcoder: AtCoder のユーザー名
+ATCODER_USERNAME=
+
+# 別オリジンのフロントから API を叩く場合のみ (カンマ区切り)
+# ALLOWED_ORIGINS=http://localhost:5173
