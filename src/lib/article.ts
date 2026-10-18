@@ -1,4 +1,4 @@
-import type { Article, ArticleMeta } from "../types/Article";
+import type { Article, ArticleMeta } from "../types/Article.ts";
 
 /** dev サーバーで Markdown が更新されたときに送られる HMR イベント名 */
 export const ARTICLE_HOT_UPDATE_EVENT = "blog:articles-updated";
