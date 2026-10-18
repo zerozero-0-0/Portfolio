@@ -7,7 +7,7 @@ import fg from "fast-glob";
 import matter from "gray-matter";
 import { JSDOM } from "jsdom";
 import MarkdownIt from "markdown-it";
-import type { Article, ArticleMeta } from "../../src/types/Article";
+import type { Article, ArticleMeta } from "../../src/types/Article.ts";
 
 const ROOT_DIR = process.cwd();
 export const ARTICLES_DIR = path.join(ROOT_DIR, "content", "blog");
@@ -93,7 +93,7 @@ export async function buildArticles(): Promise<Article[]> {
 
 export async function writeManifest(articles: Article[]) {
 	const code =
-		`import type { Article } from "../../src/types/Article";\n\n` +
+		`import type { Article } from "../../src/types/Article.ts";\n\n` +
 		`export const articles = ${JSON.stringify(articles, null, 2)} satisfies Article[];\n\n` +
 		`export default articles;`;
 

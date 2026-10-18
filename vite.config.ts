@@ -1,12 +1,12 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import react from "@vitejs/plugin-react-swc";
 import { defineConfig, type Plugin } from "vite";
-import { ARTICLE_HOT_UPDATE_EVENT } from "./src/lib/article";
+import { ARTICLE_HOT_UPDATE_EVENT } from "./src/lib/article.ts";
 import {
 	ARTICLES_DIR,
 	buildArticles,
 	writeManifest,
-} from "./worker/lib/generate-blog";
+} from "./worker/lib/generate-blog.ts";
 
 /**
  * dev サーバー起動中に content/blog 配下の Markdown を監視し、

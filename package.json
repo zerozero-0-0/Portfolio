@@ -27,11 +27,11 @@
 		"hono": "^4.13.13",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
-		"react-icons": "^5.5.0",
+		"react-icons": "^5.7.0",
 		"react-router": "^7.9.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.2.4",
+		"@biomejs/biome": "2.5.15",
 		"@cloudflare/vite-plugin": "^1.64.0",
 		"@pandacss/dev": "^2.2.0",
 		"@pandacss/preset-base": "^2.2.0",
@@ -48,7 +48,7 @@
 		"markdown-it": "^15.0.3",
 		"tsx": "^4.23.15",
 		"typescript": "~7.0.2",
-		"vite": "^7.1.2",
+		"vite": "^8.3.4",
 		"wrangler": "^4.151.1"
 	}
 }

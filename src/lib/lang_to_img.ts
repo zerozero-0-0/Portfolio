@@ -2,7 +2,7 @@ import type { IconType } from "react-icons";
 import {
 	SiC,
 	SiCplusplus,
-	SiCss3,
+	SiCss,
 	SiDocker,
 	SiHtml5,
 	SiJavascript,
@@ -22,7 +22,7 @@ export const languageToIconMap: Record<string, IconType> = {
 	Rust: SiRust,
 	"C++": SiCplusplus,
 	C: SiC,
-	CSS: SiCss3,
+	CSS: SiCss,
 	HTML: SiHtml5,
 	Dockerfile: SiDocker,
 	Markdown: SiMarkdown,
