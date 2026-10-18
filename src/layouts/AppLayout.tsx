@@ -25,8 +25,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
 					display: "flex",
 					justifyContent: { base: "center", lg: "flex-start" },
 					backgroundColor: "gray.100",
-					borderRight: { base: "none", lg: "1px solid" },
-					borderColor: { base: "transparent", lg: "gray.300" },
+					// Panda v2 は border の優先順位をプロパティの種類で決めるため、
+					// borderRight + borderColor だと borderRight 側の currentcolor が勝つ。個別プロパティで指定する
+					borderRightWidth: { base: "0", lg: "1px" },
+					borderRightStyle: "solid",
+					borderRightColor: "gray.300",
 				})}
 			>
 				<div
